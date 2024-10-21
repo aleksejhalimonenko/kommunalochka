@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тарифы коммунальных услуг</title>
+    <!-- Подключение файла стилей для шапки -->
+    <link rel="stylesheet" href="css/main.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+
+</head>
+<body>
+
+    <!-- Верхняя часть страницы с логотипом -->
+    <header class="header">
+        <div class="logo-container">
+            <img src="img/logo.png" alt="Логотип" class="logo">
+        </div>
+    </header>
+
+
+    <!-- Контейнер для таблицы с прокруткой-->
+        <div class="table-container">
+            <h2>Тарифы коммунальных услуг</h2>
+            <table id="dataTable">
+                <thead>
+                    <tr>
+                        <th>Дата</th>
+                        <th>Т1</th>
+                        <th>Т2</th>
+                        <th>Абон.плата за воду</th>
+                        <th>Абон.плата за водоотведение</th>
+                        <th>Водопостачание (1 куб. м)</th>
+                        <th>Водовідведення (1 куб. м)</th>
+                        <th>Техобслуживание (1 кв. м)</th>
+                        <th>Газ</th>
+                        <th>Газ (доставка)</th>
+                        <th>Квартплата</th>
+                        <th>Вивіз сміття</th>
+                        <th>Теплопостачання</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Данные будут добавлены сюда с помощью JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+    <script>
+        // Замените на ваш URL Google Apps Script
+        const url = 'https://script.google.com/macros/s/AKfycbwrqRCFcI3KyVJldhITcbt_zRtlS2fp1762neWYQ0QIt5r5ezp7j3aegixAGL6BQxmZ/exec';
+        // Функция для форматирования даты
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0'); // Месяцы начинаются с 0
+            const year = date.getFullYear();
+            return `${day}.${month}.${year}`; // Форматируем дату как ДД.ММ.ГГГГ
+        }
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                const tableBody = document.querySelector('#dataTable tbody');
+                data.forEach(row => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${formatDate(row.date)}</td> <!-- Форматируем дату перед добавлением в таблицу -->
+                        <td>${row.t1}</td>
+                        <td>${row.t2}</td>
+                        <td>${row.waterCharge}</td>
+                        <td>${row.sewerCharge}</td>
+                        <td>${row.waterSupply}</td>
+                        <td>${row.sewerage}</td>
+                        <td>${row.maintenance}</td>
+                        <td>${row.gas}</td>
+                        <td>${row.gasDelivery}</td>
+                        <td>${row.rent}</td>
+                        <td>${row.wasteCollection}</td>
+                        <td>${row.heating}</td>
+                    `;
+                    tableBody.appendChild(tr);
+                });
+            })
+            .catch(error => {
+                console.error('Ошибка при получении данных:', error);
+            });
+    </script>
+
+    <!-- Нижняя панель навигации -->
+    <nav class="bottom-nav">
+        <ul>
+            <li>
+                <a href="#home" class="btn">
+                    <i class="material-icons">home</i>
+                    <span>Главная</span>
+                </a>
+            </li>
+            <li>
+                <a href="#history" class="btn">
+                    <i class="material-icons">history</i>
+                    <span>История</span>
+                </a>
+            </li>
+            <li>
+                <a href="#tariffs" class="btn">
+                    <i class="material-icons">attach_money</i>
+                    <span>Тарифы</span>
+                </a>
+            </li>
+            <li>
+                <a href="#notifications" class="btn-floating">
+                    <i class="material-icons">notifications</i>
+                    <span>Уведомления</span>
+                </a>
+            </li>
+            <li>
+                <a href="#settings" class="btn-floating">
+                    <i class="material-icons">settings</i>
+                    <span>Настройки</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+</body>
+</html>
