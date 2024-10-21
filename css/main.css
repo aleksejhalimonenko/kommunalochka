@@ -1,0 +1,140 @@
+/* header.css */
+/** Стиль для верхней части страницы с логотипом **/
+.header {
+    display: flex;
+    justify-content: center; /* Центрирование по горизонтали */
+    padding: 20px 0; /* Отступы сверху и снизу */
+    background-color: white; /* Белый фон */
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.logo-container {
+    display: inline-block;
+}
+
+.logo {
+    width: 100px; /* Ширина логотипа */
+    height: auto;
+}
+
+/* styles.css */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; /* Шрифт для всего документа */
+    margin: 0; /* Убираем отступы по умолчанию */
+    padding: 0; /* Убираем отступы по умолчанию */
+    background-color: #f4f4f4; /* Цвет фона для страницы */
+}
+
+.container {
+    max-width: 400px; /* Максимальная ширина контейнера */
+    margin: 20px auto; /* Центрируем контейнер с отступом сверху и снизу */
+    padding: 20px; /* Отступы внутри контейнера */
+    background-color: #ffffff; /* Цвет фона для контейнера */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Тень для контейнера */
+    border-radius: 8px; /* Закругление углов контейнера */
+}
+
+h2 {
+    color: #0088cc; /* Цвет заголовков */
+    margin-bottom: 20px; /* Отступ снизу заголовка */
+}
+
+/* tables.css */
+.table-container {
+    overflow-x: auto; /* Горизонтальная прокрутка для таблицы */
+    max-width: calc(100% - 20px); /*400px;  Максимальная ширина контейнера */
+    margin: 20px auto; /* Центрируем контейнер с отступом сверху и снизу */
+    padding: 20px; /* Отступы внутри контейнера */
+    background-color: #ffffff; /* Цвет фона для контейнера */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Тень для контейнера */
+    border-radius: 8px; /* Закругление углов контейнера */
+    overflow-y: scroll;
+    max-height: 420px;
+}
+
+
+h2 {
+            text-align: center; /* Центрируем заголовок */
+            color: #0088cc; /* Цвет заголовка, как было раньше */
+            margin: 0 0 15px 0; /* Уменьшаем отступы снизу заголовка */
+            font-size: 20px; /* Уменьшаем размер шрифта заголовка */
+        }
+
+table {
+            width: 100%; /* Ширина таблицы 100% */
+            border-collapse: collapse; /* Убираем пробелы между ячейками */
+        }
+
+th, td {
+            padding: 10px; /* Уменьшаем отступы внутри ячеек */
+            text-align: left; /* Выравнивание текста в ячейках */
+            border-bottom: 1px solid #D1D1D6; /* Линия снизу ячеек */
+            background-color: #F9F9F9; /* Цвет фона ячеек */
+            font-size: 14px; /* Уменьшаем размер шрифта ячеек */
+        }
+
+th {
+            background-color: #F0F0F5; /* Цвет фона для заголовков столбцов */
+            font-weight: 600; /* Полужирный шрифт для заголовков */
+            color: #000; /* Черный цвет для текста заголовков */
+        }
+
+tr:hover {
+            background-color: #E5E5EA; /* Цвет фона при наведении на строки */
+        }
+
+ /* Стили для экранов шириной до 480px */
+        @media (max-width: 480px) {
+            body {
+                padding: 5px; /* Еще больше уменьшаем отступы для маленьких экранов */
+            }
+
+            h2 {
+                font-size: 18px; /* Уменьшаем размер шрифта заголовка для мобильных */
+            }
+
+            th, td {
+                font-size: 12px; /* Уменьшаем размер шрифта ячеек для мобильных */
+                padding: 8px; /* Уменьшаем отступы внутри ячеек для мобильных */
+            }
+        }
+
+/* Навигационная панель. Основные стили для нижней навигационной панели */
+nav {
+    background-color: white; /* Убираем фон */
+    box-shadow: none; /* Убираем тень */
+}
+
+.bottom-nav {
+    position: fixed; /* Фиксируем панель внизу */
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: white; /* Белый фон */
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 1000; /* Чтобы панель была над другими элементами */
+}
+
+.bottom-nav ul {
+    display: flex;
+    justify-content: space-around; /* Равномерно распределяем элементы */
+    margin: 0;
+    padding: 10px 0;
+}
+
+.bottom-nav ul li {
+    list-style: none;
+    text-align: center; /* Центрируем текст */
+}
+
+.bottom-nav ul li a.btn,
+.bottom-nav ul li a.btn-floating {
+    text-decoration: none;
+    color: #007aff; /* Цвет текста */
+}
+
+.bottom-nav ul li span {
+    display: block; /* Отображаем подпись под иконкой */
+    font-size: 12px; /* Размер шрифта для подписи */
+}
+
