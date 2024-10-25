@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Передача коммунальных услуг</title>
+    <!-- Подключение файла стилей для шапки
+    <link rel="stylesheet" href="css/styles.css"> -->
+    <link rel="stylesheet" href="css/main-kombajn.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+
+        <!-- Верхняя часть страницы с логотипом -->
+    <header class="header">
+        <div class="logo-container">
+            <img src="img/logo.png" alt="Логотип" class="logo">
+        </div>
+    </header>
+
+    <!-- Контейнер для передачи показаний -->
+    <div class="container-stock">
+        <h2>Передача показаний</h2>
+        <!-- Форма для ввода данных по коммунальным услугам -->
+        <form id="utilityForm">
+            <div class="input-field">
+                <label for="electricityt1">Электроэнергия Т1 (кВт)</label>
+                <input id="electricityt1" type="number" name="electricityt1" required>
+            </div>
+
+            <div class="input-field">
+                <label for="electricityt2">Электроэнергия Т2 (кВт)</label>
+                <input id="electricityt2" type="number" name="electricityt2" required>
+            </div>
+
+            <div class="input-field">
+                <label for="water">Вода (куб. м)</label>
+                <input id="water" type="number" name="water" required>
+            </div>
+
+            <div class="input-field">
+                <label for="gas">Газ (куб. м)</label>
+                <input id="gas" type="number" name="gas" required>
+            </div>
+
+            <div class="input-field">
+                <label for="date">Дата показаний</label>
+                <input id="date" type="date" name="date" required>
+            </div>
+
+            <!-- Кнопка для отправки данных -->
+            <button type="submit">Отправить данные</button>
+        </form>
+
+        <!-- Блок для отображения ответа -->
+        <div id="response" class="card-panel" style="display:none;"></div>
+    </div>
+
+<!-- Контейнер для настроек -->
+    <div class="container-settings">
+        <h2>Настройки</h2>
+
+        <!-- Здесь добавляем разделы настроек -->
+        <div class="settings-placeholder">
+            <h3>Уведомления</h3>
+            <label class="switch">
+                <input type="checkbox" id="notificationsToggle">
+                <span class="slider round"></span>
+            </label>
+            <p>Включить/выключить уведомления.</p>
+            
+            <h3>Язык интерфейса</h3>
+            <select id="languageSelect">
+                <option value="ru">Русский</option>
+                <option value="uk">Украинский</option>
+                <option value="pl">Польский</option>
+            </select>
+
+            <h3>Управление данными</h3>
+            <button id="exportData">Выгрузить данные</button>
+            <p>Скачать данные в формате таблицы.</p>
+
+            <h3>Справка и поддержка</h3>
+            <ul>
+                <li><a href="faq.html">Часто задаваемые вопросы</a></li>
+                <li><a href="support.html">Контактная поддержка</a></li>
+            </ul>
+        </div>
+    </div>
+
+        <!-- Контейнер для всплывающего уведомления -->
+    <div class="container-stock">
+        <h2>Уведомления</h2>
+        <p>Здесь пока нет новых уведомлений.</p>
+    </div>
+
+     <!-- Контейнер для таблицы с прокруткой-->
+        <div class="table-container">
+            <h2>Тарифы коммунальных услуг</h2>
+            <table id="tariffsTable">
+                <thead>
+                    <tr>
+                        <th>Дата</th>
+                        <th>Т1</th>
+                        <th>Т2</th>
+                        <th>Абон.плата за воду</th>
+                        <th>Абон.плата за водоотведение</th>
+                        <th>Водопостачание (1 куб. м)</th>
+                        <th>Водовідведення (1 куб. м)</th>
+                        <th>Техобслуживание (1 кв. м)</th>
+                        <th>Газ</th>
+                        <th>Газ (доставка)</th>
+                        <th>Квартплата</th>
+                        <th>Вивіз сміття</th>
+                        <th>Теплопостачання</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Данные будут добавлены сюда с помощью JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+     <!-- Контейнер для таблицы с прокруткой-->
+        <div class="table-container">
+            <h2>История показаний коммунальных услуг</h2>
+            <table id="historyTable">
+                <thead>
+                    <tr>
+                        <th>Дата</th>
+                        <th>Пользователь</th>
+                        <th>Т1</th>
+                        <th>Т2</th>
+                        <th>Вода</th>
+                        <th>Газ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Данные будут добавлены сюда с помощью JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+    <!-- Нижняя панель навигации -->
+    <nav class="bottom-nav">
+        <ul>
+            <li>
+                <a href="index.html" class="btn">
+                    <i class="material-icons">home</i>
+                    <span>Главная</span>
+                </a>
+            </li>
+            <li>
+                <a href="history.html" class="btn">
+                    <i class="material-icons">history</i>
+                    <span>История</span>
+                </a>
+            </li>
+            <li>
+                <a href="tarify.html" class="btn">
+                    <i class="material-icons">attach_money</i>
+                    <span>Тарифы</span>
+                </a>
+            </li>
+            <li>
+                <a href="notification.html" class="btn-floating">
+                    <i class="material-icons">notifications</i>
+                    <span>Уведомления</span>
+                </a>
+            </li>
+            <li>
+                <a href="settings.html" class="btn-floating">
+                    <i class="material-icons">settings</i>
+                    <span>Настройки</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+
+    <!-- Подключение скрипта -->
+    <script src="js/script.js"></script>
+    <script src="js/table-work.js"></script>
+
+</body>
+</html>
