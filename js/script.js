@@ -20,7 +20,7 @@ document.getElementById('utilityForm').addEventListener('submit', function(event
   const formData = new FormData(form);
   formData.append('user', 'Admin');
 
-  fetch('https://script.google.com/macros/s/AKfycbwbXfjsOt6AkD3qPgL6WeEJC0Nh-TF9inYsH8rpKIuSNdBWkdsnNtD2gAodlkDaQMtF8w/exec')
+  fetch('https://script.google.com/macros/s/AKfycbwXzcQLbImnvgdEOkwNcr5eC3Gs_sjQH7a1BPA87HkH03ST5MeiY8LFpNrcPqKbFqmYWQ/exec')
     .then(response => response.json())
     .then(lastData => {
       const newData = {
@@ -60,7 +60,7 @@ document.getElementById('utilityForm').addEventListener('submit', function(event
           params.append(pair[0], pair[1]);
         }
 
-        fetch('https://script.google.com/macros/s/AKfycbwbXfjsOt6AkD3qPgL6WeEJC0Nh-TF9inYsH8rpKIuSNdBWkdsnNtD2gAodlkDaQMtF8w/exec', {
+        fetch('https://script.google.com/macros/s/AKfycbwXzcQLbImnvgdEOkwNcr5eC3Gs_sjQH7a1BPA87HkH03ST5MeiY8LFpNrcPqKbFqmYWQ/exec', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
