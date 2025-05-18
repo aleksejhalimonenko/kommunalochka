@@ -1,3 +1,9 @@
+ // ⏱ Telegram WebApp API и логика
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.ready(); // Сообщаем Telegram, что всё загружено
+      }
+
 
 document.getElementById('utilityForm').addEventListener('submit', function(event) {
   event.preventDefault();
@@ -88,7 +94,6 @@ document.getElementById('utilityForm').addEventListener('submit', function(event
                 submitBtn.disabled = false;
                 submitBtn.innerText = 'Отправить данные';
 				// Уведомляем Telegram, что веб-приложение загружено
-window.Telegram.WebApp.ready();
 		// ✅ Закрываем WebApp
 		// // Закрываем WebApp, если мы в нем
 if (window.Telegram && window.Telegram.WebApp) {
