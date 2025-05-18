@@ -88,10 +88,7 @@ document.getElementById('utilityForm').addEventListener('submit', function(event
                 submitBtn.disabled = false;
                 submitBtn.innerText = 'Отправить данные';
               }
- // Вызов закрытия WebApp — один раз после окончания таймера
-    if (window.Telegram && window.Telegram.WebApp) {
-      window.Telegram.WebApp.close();
-    }
+
             }, 1000);
           } else {
             responseDiv.innerText = 'Ошибка при отправке данных: ' + (data.message || 'Неизвестная ошибка');
@@ -119,3 +116,7 @@ document.getElementById('utilityForm').addEventListener('submit', function(event
       submitBtn.classList.remove('loading');
     });
 });
+ // Вызов закрытия WebApp — один раз после окончания таймера
+    if (window.Telegram && window.Telegram.WebApp) {
+      window.Telegram.WebApp.close();
+    }
