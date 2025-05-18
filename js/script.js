@@ -88,11 +88,10 @@ document.getElementById('utilityForm').addEventListener('submit', function(event
                 submitBtn.disabled = false;
                 submitBtn.innerText = 'Отправить данные';
               }
-// В конце таймера закрыть WebApp
-      setTimeout(() => {
-        if (window.Telegram && window.Telegram.WebApp) {
-          window.Telegram.WebApp.close();
-        }
+ // Вызов закрытия WebApp — один раз после окончания таймера
+    if (window.Telegram && window.Telegram.WebApp) {
+      window.Telegram.WebApp.close();
+    }
             }, 1000);
           } else {
             responseDiv.innerText = 'Ошибка при отправке данных: ' + (data.message || 'Неизвестная ошибка');
