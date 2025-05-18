@@ -1,3 +1,5 @@
+const tg = window.Telegram.WebApp;
+tg.ready(); // Обязательно — сообщает Telegram, что всё загружено
 document.getElementById('utilityForm').addEventListener('submit', function(event) {
   event.preventDefault();
 
@@ -86,12 +88,8 @@ document.getElementById('utilityForm').addEventListener('submit', function(event
                 countdownSpan.innerText = '';
                 submitBtn.disabled = false;
                 submitBtn.innerText = 'Отправить данные';
-				// Уведомляем Telegram, что веб-приложение загружено
 		// ✅ Закрываем WebApp
-		// // Закрываем WebApp, если мы в нем
-if (window.Telegram && window.Telegram.WebApp) {
-  window.Telegram.WebApp.close();
-}
+        tg.close();
               }
             }, 1000);
           } else {
