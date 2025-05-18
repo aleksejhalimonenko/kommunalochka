@@ -66,3 +66,25 @@ button:hover {
     font-size: 14px;
     text-align: center;
 }
+
+
+button.loading {
+  position: relative;
+  color: white;
+  background: linear-gradient(270deg, #4caf50, #81c784, #4caf50);
+  background-size: 600% 600%;
+  animation: gradientShift 3s ease infinite;
+  cursor: not-allowed;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
