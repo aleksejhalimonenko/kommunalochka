@@ -1,3 +1,11 @@
+  if (!window.Telegram || !window.Telegram.WebApp) {
+    alert("Это приложение работает только внутри Telegram");
+    // Можно, например, скрыть весь контент или перенаправить:
+    document.body.innerHTML = "<h2>Открывайте это приложение в Telegram</h2>";
+  } else {
+    window.Telegram.WebApp.ready();
+  }
+
 document.getElementById('utilityForm').addEventListener('submit', function(event) {
   event.preventDefault();
 
