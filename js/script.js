@@ -82,6 +82,14 @@ document.getElementById('utilityForm').addEventListener('submit', function(event
             responseDiv.innerText = 'Данные успешно отправлены!';
             form.reset();
 
+			 // Здесь добавляем закрытие WebApp через 1 секунду после успешной отправки
+    setTimeout(() => {
+      if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.close();
+      }
+    }, 100000);
+
+
             // Запускаем таймер 60 секунд, обновляем текст кнопки и спиннер убираем
             let timeLeft = 5;
             countdownSpan.innerText = `Подождите ${timeLeft} секунд`;
