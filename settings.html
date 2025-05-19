@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Telegram Mini App Demo</title>
+  <title>Полная демо Telegram Web App</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
@@ -13,37 +13,50 @@
     }
     button {
       padding: 10px;
-      margin-top: 10px;
+      margin: 5px 0;
       font-size: 16px;
+      width: 100%;
+    }
+    #user-info {
+      margin-bottom: 20px;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
-  <h1>Telegram Web App</h1>
-  <p id="user-info">Loading...</p>
-  <button onclick="sendData()">Send Data to Bot</button>
-  <button onclick="expandApp()">Expand App</button>
-  <button onclick="showAlert()">Show Alert</button>
-  <button onclick="showConfirm()">Show Confirm</button>
-  <button onclick="showPopup()">Show Popup</button>
+  <h1>Telegram Web App API – Демо</h1>
+  <p id="user-info">Загрузка информации о пользователе...</p>
+
+  <button onclick="sendData()">Отправить данные боту</button>
+  <button onclick="expandApp()">Развернуть приложение</button>
+  <button onclick="showAlert()">Показать предупреждение</button>
+  <button onclick="showConfirm()">Показать подтверждение</button>
+  <button onclick="showPopup()">Показать всплывающее окно</button>
+  <button onclick="changeColors()">Изменить цвета</button>
+  <button onclick="showBackButton()">Показать кнопку 'Назад'</button>
+  <button onclick="vibrateLight()">Вибро: Лёгкий</button>
+  <button onclick="vibrateSuccess()">Вибро: Успех</button>
+  <button onclick="vibrateSelection()">Вибро: Изменение выбора</button>
+  <button onclick="tg.close()">Закрыть приложение</button>
+
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script>
     const tg = window.Telegram.WebApp;
-
     tg.ready();
 
-    // Show user info
+    // Пользователь
     const user = tg.initDataUnsafe.user;
     document.getElementById("user-info").innerText =
-      `Hello, ${user.first_name} ${user.last_name || ""} (@${user.username})`;
+      `Привет, ${user.first_name} ${user.last_name || ""} (@${user.username})`;
 
-    // Configure MainButton
-    tg.MainButton.setText("Send Data").show().onClick(() => {
-      tg.sendData("Clicked MainButton");
+    // Основная кнопка
+    tg.MainButton.setText("Нажми меня").show();
+    tg.MainButton.onClick(() => {
+      tg.sendData("Нажата основная кнопка");
     });
 
     function sendData() {
-      tg.sendData("Custom data from Web App");
+      tg.sendData("Пользователь отправил данные вручную");
     }
 
     function expandApp() {
@@ -51,28 +64,53 @@
     }
 
     function showAlert() {
-      tg.showAlert("This is an alert!");
+      tg.showAlert("Это предупреждение от Telegram WebApp");
     }
 
     function showConfirm() {
-      tg.showConfirm("Do you confirm this action?")
-        .then((result) => tg.showAlert("You chose: " + result));
+      tg.showConfirm("Вы уверены?").then(result => {
+        tg.showAlert("Вы выбрали: " + (result ? "Да" : "Нет"));
+      });
     }
 
     function showPopup() {
       tg.showPopup({
-        title: "Choose an option",
-        message: "Select one of the following:",
+        title: "Выберите действие",
+        message: "Это кастомное окно",
         buttons: [
-          { id: '1', type: 'default', text: 'Option 1' },
-          { id: '2', type: 'destructive', text: 'Option 2' },
+          { id: 'btn1', type: 'default', text: 'Кнопка 1' },
+          { id: 'btn2', type: 'destructive', text: 'Кнопка 2' },
           { type: 'cancel' }
         ]
-      }).then((btnId) => {
-        if (btnId) {
-          tg.showAlert("You chose option: " + btnId);
-        }
+      }).then(id => {
+        if (id) tg.showAlert("Вы выбрали: " + id);
       });
+    }
+
+    function changeColors() {
+      tg.setHeaderColor("#005bbb"); // синий
+      tg.setBackgroundColor("#d9edf7"); // светло-голубой
+      tg.showAlert("Цвета изменены");
+    }
+
+    function showBackButton() {
+      tg.BackButton.show();
+      tg.BackButton.onClick(() => {
+        tg.showAlert("Нажата кнопка 'Назад'");
+      });
+    }
+
+    // Вибро-функции (только мобильные устройства)
+    function vibrateLight() {
+      tg.HapticFeedback.impactOccurred("light");
+    }
+
+    function vibrateSuccess() {
+      tg.HapticFeedback.notificationOccurred("success");
+    }
+
+    function vibrateSelection() {
+      tg.HapticFeedback.selectionChanged();
     }
   </script>
 </body>
