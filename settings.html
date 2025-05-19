@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Telegram Mini App Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: var(--tg-theme-bg-color, #ffffff);
+      color: var(--tg-theme-text-color, #000000);
+    }
+    button {
+      padding: 10px;
+      margin-top: 10px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Telegram Web App</h1>
+  <p id="user-info">Loading...</p>
+  <button onclick="sendData()">Send Data to Bot</button>
+  <button onclick="expandApp()">Expand App</button>
+  <button onclick="showAlert()">Show Alert</button>
+  <button onclick="showConfirm()">Show Confirm</button>
+  <button onclick="showPopup()">Show Popup</button>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script>
+    const tg = window.Telegram.WebApp;
+
+    tg.ready();
+
+    // Show user info
+    const user = tg.initDataUnsafe.user;
+    document.getElementById("user-info").innerText =
+      `Hello, ${user.first_name} ${user.last_name || ""} (@${user.username})`;
+
+    // Configure MainButton
+    tg.MainButton.setText("Send Data").show().onClick(() => {
+      tg.sendData("Clicked MainButton");
+    });
+
+    function sendData() {
+      tg.sendData("Custom data from Web App");
+    }
+
+    function expandApp() {
+      tg.expand();
+    }
+
+    function showAlert() {
+      tg.showAlert("This is an alert!");
+    }
+
+    function showConfirm() {
+      tg.showConfirm("Do you confirm this action?")
+        .then((result) => tg.showAlert("You chose: " + result));
+    }
+
+    function showPopup() {
+      tg.showPopup({
+        title: "Choose an option",
+        message: "Select one of the following:",
+        buttons: [
+          { id: '1', type: 'default', text: 'Option 1' },
+          { id: '2', type: 'destructive', text: 'Option 2' },
+          { type: 'cancel' }
+        ]
+      }).then((btnId) => {
+        if (btnId) {
+          tg.showAlert("You chose option: " + btnId);
+        }
+      });
+    }
+  </script>
+</body>
+</html>
