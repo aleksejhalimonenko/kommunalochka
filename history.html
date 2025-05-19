@@ -39,41 +39,96 @@
                 </tbody>
             </table>
         </div>
+<script>
+    const url = 'https://script.google.com/macros/s/AKfycbwK7cep_JCGyiyW5OqrQ-2jjx-rM5e5lbEpRum1j2eTtWzTrCxDxGXAU0okoriIgnTdGA/exec';
 
-    <script>
-        // Замените на ваш URL Google Apps Script
-        const url = 'https://script.google.com/macros/s/AKfycbwK7cep_JCGyiyW5OqrQ-2jjx-rM5e5lbEpRum1j2eTtWzTrCxDxGXAU0okoriIgnTdGA/exec';
+    let data = []; // все данные
+    let currentPage = 1;
+    const rowsPerPage = 10;
 
-        // Функция для форматирования даты
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            const day = String(date.getDate()).padStart(2, '0');
-            const month = String(date.getMonth() + 1).padStart(2, '0'); // Месяцы начинаются с 0
-            const year = date.getFullYear();
-            return `${day}.${month}.${year}`; // Форматируем дату как ДД.ММ.ГГГГ
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}.${month}.${year}`;
+    }
+
+    function displayTable(page) {
+        const tableBody = document.querySelector('#dataTable tbody');
+        tableBody.innerHTML = ''; // очищаем таблицу
+
+        const start = (page - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+        const pageData = data.slice(start, end);
+
+        pageData.forEach(row => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${formatDate(row.date)}</td>
+                <td>${row.user}</td>
+                <td>${row.electricityT1}</td>
+                <td>${row.electricityT2}</td>
+                <td>${row.water}</td>
+                <td>${row.gas}</td>
+            `;
+            tableBody.appendChild(tr);
+        });
+    }
+
+    function setupPagination() {
+        const pagination = document.createElement('div');
+        pagination.id = 'pagination';
+
+        const totalPages = Math.ceil(data.length / rowsPerPage);
+
+        const prevBtn = document.createElement('button');
+        prevBtn.textContent = '← Назад';
+        prevBtn.disabled = currentPage === 1;
+        prevBtn.onclick = () => {
+            if (currentPage > 1) {
+                currentPage--;
+                displayTable(currentPage);
+                updateButtons();
+            }
+        };
+
+        const nextBtn = document.createElement('button');
+        nextBtn.textContent = 'Вперед →';
+        nextBtn.disabled = currentPage === totalPages;
+        nextBtn.onclick = () => {
+            if (currentPage < totalPages) {
+                currentPage++;
+                displayTable(currentPage);
+                updateButtons();
+            }
+        };
+
+        pagination.appendChild(prevBtn);
+        pagination.appendChild(document.createTextNode(` Страница ${currentPage} из ${totalPages} `));
+        pagination.appendChild(nextBtn);
+
+        document.querySelector('.table-container').appendChild(pagination);
+
+        function updateButtons() {
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = currentPage === totalPages;
+            pagination.childNodes[1].textContent = ` Страница ${currentPage} из ${totalPages} `;
         }
+    }
 
-        fetch(url)
-            .then(response => response.json())
-            .then(data => {
-                const tableBody = document.querySelector('#dataTable tbody');
-                data.forEach(row => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td>${formatDate(row.date)}</td> <!-- Форматируем дату перед добавлением в таблицу -->
-                        <td>${row.user}</td>
-                        <td>${row.electricityT1}</td>
-                        <td>${row.electricityT2}</td>
-                        <td>${row.water}</td>
-                        <td>${row.gas}</td>
-                    `;
-                    tableBody.appendChild(tr);
-                });
-            })
-            .catch(error => {
-                console.error('Ошибка при получении данных:', error);
-            });
-    </script>
+    fetch(url)
+        .then(response => response.json())
+        .then(jsonData => {
+            data = jsonData;
+            displayTable(currentPage);
+            setupPagination();
+        })
+        .catch(error => {
+            console.error('Ошибка при получении данных:', error);
+        });
+</script>
+
     
     <!-- Нижняя панель навигации -->
     <nav class="bottom-nav">
