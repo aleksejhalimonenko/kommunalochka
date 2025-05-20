@@ -9,12 +9,12 @@
 	//window.Telegram.WebApp.expand();  // Разворачиваем WebApp на весь экран
 	//window.Telegram.WebApp.MainButton.setText("Отправить данные");
 	//window.Telegram.WebApp.MainButton.show();
-//window.Telegram.WebApp.MainButton.hide(); // скрыть кнопку MainButton 
+        //window.Telegram.WebApp.MainButton.hide(); // скрыть кнопку MainButton 
 	//window.Telegram.WebApp.requestFullscreen.isAvailable();
 window.Telegram.WebApp.requestFullscreen();
   }
 
-document.documentElement.requestFullscreen(); 
+//document.documentElement.requestFullscreen(); 
   
 document.getElementById('utilityForm').addEventListener('submit', function(event) {
   event.preventDefault();
