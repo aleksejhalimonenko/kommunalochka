@@ -12,6 +12,7 @@
         window.Telegram.WebApp.MainButton.hide(); // скрыть кнопку MainButton 
 	//window.Telegram.WebApp.requestFullscreen.isAvailable();
 window.Telegram.WebApp.requestFullscreen();
+        window.Telegram.WebApp.setBackgroundColor(#4A7FBD);
   }
 
 //document.documentElement.requestFullscreen(); 
