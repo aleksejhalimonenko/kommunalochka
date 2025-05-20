@@ -88,7 +88,7 @@ button.loading {
     background-position: 0% 50%;
   }
 }
-/* Скрыть кнопку закрыть */
+/* Скрыть кнопку закрыть
 #closeBtn {
   display: none;
   margin-top: 10px;
@@ -99,3 +99,4 @@ button.loading {
   border-radius: 6px;
   cursor: pointer;
 }
+ */
