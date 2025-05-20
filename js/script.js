@@ -32,7 +32,7 @@ document.getElementById('utilityForm').addEventListener('submit', function(event
 
   // Блокируем кнопку, меняем текст и добавляем анимацию (через класс)
   submitBtn.disabled = true;
-  submitBtn.innerText = 'Отправка...';
+  submitBtn.innerText = 'Надсилання...';
   submitBtn.classList.add('loading'); // стиль для анимации — добавим ниже в CSS
 
   const formData = new FormData(form);
