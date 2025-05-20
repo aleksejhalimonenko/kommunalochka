@@ -6,17 +6,12 @@
     document.body.innerHTML = "<h2>Открывайте это приложение в Telegram</h2>";
   } else {
     window.Telegram.WebApp.ready();
-	//window.Telegram.WebApp.expand();  // Разворачиваем WebApp на весь экран
-	//window.Telegram.WebApp.MainButton.setText("Отправить данные");
-	//window.Telegram.WebApp.MainButton.show();
-        window.Telegram.WebApp.MainButton.hide(); // скрыть кнопку MainButton 
-	window.Telegram.WebApp.requestFullscreen.isAvailable();
-window.Telegram.WebApp.requestFullscreen();
-        //window.Telegram.WebApp.setBackgroundColor(#4A7FBD);
+	window.Telegram.WebApp.expand();  // Разворачиваем WebApp на весь экран
+	window.Telegram.WebApp.MainButton.setText("Отправить данные");
+	window.Telegram.WebApp.MainButton.show();
   }
-
-//document.documentElement.requestFullscreen(); 
   
+
 document.getElementById('utilityForm').addEventListener('submit', function(event) {
   event.preventDefault();
 
@@ -33,7 +28,7 @@ document.getElementById('utilityForm').addEventListener('submit', function(event
 
   // Блокируем кнопку, меняем текст и добавляем анимацию (через класс)
   submitBtn.disabled = true;
-  submitBtn.innerText = 'Надсилання...';
+  submitBtn.innerText = 'Отправка...';
   submitBtn.classList.add('loading'); // стиль для анимации — добавим ниже в CSS
 
   const formData = new FormData(form);
@@ -92,28 +87,28 @@ document.getElementById('utilityForm').addEventListener('submit', function(event
         .then(data => {
           responseDiv.style.display = 'block';
           if (data.result === 'success') {
-            responseDiv.innerText = 'Дані успішно надіслані!';
+            responseDiv.innerText = 'Данные успешно отправлены!';
             form.reset();
 			
 
             // Запускаем таймер 5 секунд, обновляем текст кнопки и спиннер убираем
             let timeLeft = 5;
-            countdownSpan.innerText = `Зачекайте ${timeLeft} секунд`;
+            countdownSpan.innerText = `Подождите ${timeLeft} секунд`;
             const timerId = setInterval(() => {
               timeLeft--;
               if (timeLeft > 0) {
-                countdownSpan.innerText = `Зачекайте ${timeLeft} секунд`;
+                countdownSpan.innerText = `Подождите ${timeLeft} секунд`;
               } else {
                 clearInterval(timerId);
                 countdownSpan.innerText = '';
                 submitBtn.disabled = false;
-                submitBtn.innerText = 'Відправити дані';
+                submitBtn.innerText = 'Отправить данные';
               }
             }, 1000);
           } else {
-            responseDiv.innerText = 'Помилка при відправці даних: ' + (data.message || 'Неизвестная ошибка');
+            responseDiv.innerText = 'Ошибка при отправке данных: ' + (data.message || 'Неизвестная ошибка');
             submitBtn.disabled = false;
-            submitBtn.innerText = 'Відправити дані';
+            submitBtn.innerText = 'Отправить данные';
           }
           submitBtn.classList.remove('loading');
 		  
@@ -122,9 +117,9 @@ document.getElementById('utilityForm').addEventListener('submit', function(event
         .catch(error => {
           console.error('Ошибка:', error);
           responseDiv.style.display = 'block';
-          responseDiv.innerText = 'Сталася помилка при відправленні даних.';
+          responseDiv.innerText = 'Произошла ошибка при отправке данных.';
           submitBtn.disabled = false;
-          submitBtn.innerText = 'Відправити дані';
+          submitBtn.innerText = 'Отправить данные';
           submitBtn.classList.remove('loading');
         });
       }
