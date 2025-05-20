@@ -88,3 +88,14 @@ button.loading {
     background-position: 0% 50%;
   }
 }
+
+#closeBtn {
+  display: none;
+  margin-top: 10px;
+  background-color: #d9534f;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+}
