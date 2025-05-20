@@ -7,8 +7,8 @@
   } else {
     window.Telegram.WebApp.ready();
 	//window.Telegram.WebApp.expand();  // Разворачиваем WebApp на весь экран
-	window.Telegram.WebApp.MainButton.setText("Отправить данные");
-	window.Telegram.WebApp.MainButton.show();
+	//window.Telegram.WebApp.MainButton.setText("Отправить данные");
+	//window.Telegram.WebApp.MainButton.show();
         //window.Telegram.WebApp.MainButton.hide(); // скрыть кнопку MainButton 
 	//window.Telegram.WebApp.requestFullscreen.isAvailable();
 window.Telegram.WebApp.requestFullscreen();
@@ -91,28 +91,28 @@ document.getElementById('utilityForm').addEventListener('submit', function(event
         .then(data => {
           responseDiv.style.display = 'block';
           if (data.result === 'success') {
-            responseDiv.innerText = 'Данные успешно отправлены!';
+            responseDiv.innerText = 'Дані успішно надіслані!';
             form.reset();
 			
 
             // Запускаем таймер 5 секунд, обновляем текст кнопки и спиннер убираем
             let timeLeft = 5;
-            countdownSpan.innerText = `Подождите ${timeLeft} секунд`;
+            countdownSpan.innerText = `Зачекайте ${timeLeft} секунд`;
             const timerId = setInterval(() => {
               timeLeft--;
               if (timeLeft > 0) {
-                countdownSpan.innerText = `Подождите ${timeLeft} секунд`;
+                countdownSpan.innerText = `Зачекайте ${timeLeft} секунд`;
               } else {
                 clearInterval(timerId);
                 countdownSpan.innerText = '';
                 submitBtn.disabled = false;
-                submitBtn.innerText = 'Отправить данные';
+                submitBtn.innerText = 'Відправити дані';
               }
             }, 1000);
           } else {
-            responseDiv.innerText = 'Ошибка при отправке данных: ' + (data.message || 'Неизвестная ошибка');
+            responseDiv.innerText = 'Помилка при відправці даних: ' + (data.message || 'Неизвестная ошибка');
             submitBtn.disabled = false;
-            submitBtn.innerText = 'Отправить данные';
+            submitBtn.innerText = 'Відправити дані';
           }
           submitBtn.classList.remove('loading');
 		  
@@ -121,9 +121,9 @@ document.getElementById('utilityForm').addEventListener('submit', function(event
         .catch(error => {
           console.error('Ошибка:', error);
           responseDiv.style.display = 'block';
-          responseDiv.innerText = 'Произошла ошибка при отправке данных.';
+          responseDiv.innerText = 'Сталася помилка при відправленні даних.';
           submitBtn.disabled = false;
-          submitBtn.innerText = 'Отправить данные';
+          submitBtn.innerText = 'Відправити дані';
           submitBtn.classList.remove('loading');
         });
       }
