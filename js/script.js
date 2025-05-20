@@ -1,5 +1,12 @@
 
-
+	 // Инициализация Telegram Web App API
+    if (!window.Telegram || !window.Telegram.WebApp) {
+    alert("Это приложение работает только внутри Telegram");
+    // Можно, например, скрыть весь контент или перенаправить:
+    document.body.innerHTML = "<h2>Открывайте это приложение в Telegram</h2>";
+  } else {
+    window.Telegram.WebApp.ready();
+  }
 document.getElementById('utilityForm').addEventListener('submit', function(event) {
   event.preventDefault();
 
@@ -22,14 +29,7 @@ document.getElementById('utilityForm').addEventListener('submit', function(event
   const formData = new FormData(form);
   formData.append('user', 'Admin');
      
-	 // Инициализация Telegram Web App API
-    if (!window.Telegram || !window.Telegram.WebApp) {
-    alert("Это приложение работает только внутри Telegram");
-    // Можно, например, скрыть весь контент или перенаправить:
-    document.body.innerHTML = "<h2>Открывайте это приложение в Telegram</h2>";
-  } else {
-    window.Telegram.WebApp.ready();
-  }
+
 
   fetch('https://script.google.com/macros/s/AKfycbwXzcQLbImnvgdEOkwNcr5eC3Gs_sjQH7a1BPA87HkH03ST5MeiY8LFpNrcPqKbFqmYWQ/exec')
     .then(response => response.json())
@@ -127,4 +127,12 @@ document.getElementById('utilityForm').addEventListener('submit', function(event
       submitBtn.innerText = 'Отправить данные';
       submitBtn.classList.remove('loading');
     });
+});
+// Обработчик кнопки "Закрыть"
+document.getElementById('closeBtn').addEventListener('click', function () {
+  if (window.Telegram && window.Telegram.WebApp) {
+    window.Telegram.WebApp.close();
+  } else {
+    alert("Кнопка работает только внутри Telegram.");
+  }
 });
