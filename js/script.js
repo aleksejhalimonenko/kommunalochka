@@ -6,7 +6,7 @@
     document.body.innerHTML = "<h2>Открывайте это приложение в Telegram</h2>";
   } else {
     window.Telegram.WebApp.ready();
-	window.Telegram.WebApp.expand();  // Разворачиваем WebApp на весь экран
+	//window.Telegram.WebApp.expand();  // Разворачиваем WebApp на весь экран
 	window.Telegram.WebApp.MainButton.setText("Отправить данные");
 	window.Telegram.WebApp.MainButton.show();
 	window.Telegram.WebApp.MainButton.requestFullscreen();
