@@ -12,7 +12,7 @@
 	window.Telegram.WebApp.requestFullscreen.isAvailable();
   }
 
-document.documentElement.requestFullscreen(); 
+//document.documentElement.requestFullscreen(); 
   
 document.getElementById('utilityForm').addEventListener('submit', function(event) {
   event.preventDefault();
