@@ -9,7 +9,7 @@
 	//window.Telegram.WebApp.expand();  // Разворачиваем WebApp на весь экран
 	window.Telegram.WebApp.MainButton.setText("Отправить данные");
 	window.Telegram.WebApp.MainButton.show();
-	window.Telegram.WebApp.MainButton.requestFullscreen();
+	window.Telegram.WebApp.requestFullscreen();
   }
 
 document.documentElement.requestFullscreen(); 
