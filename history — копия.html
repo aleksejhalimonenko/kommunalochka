@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тарифы коммунальных услуг</title>
+    <!-- Подключение файла стилей для шапки -->
+    <link rel="stylesheet" href="css/main.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+
+</head>
+<body>
+
+<!-- Верхняя часть страницы с логотипом -->
+    <header class="header">
+        <div class="logo-container">
+            <img src="img/Logo.png" alt="Логотип" class="logo">
+        </div>
+    </header>
+
+    
+    <!-- Контейнер для таблицы с прокруткой-->
+        <div class="table-container"> <!-- Контейнер для таблицы с прокруткой -->
+            <h2>История показаний коммунальных услуг</h2>
+            <table id="dataTable">
+                <thead>
+                    <tr>
+                        <th>Дата</th>
+                        <th>Пользователь</th>
+                        <th>Т1</th>
+                        <th>Т2</th>
+                        <th>Вода</th>
+                        <th>Газ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Данные будут добавлены сюда с помощью JavaScript -->
+                </tbody>
+            </table>
+        </div>
+<script>
+    const url = 'https://script.google.com/macros/s/AKfycbwK7cep_JCGyiyW5OqrQ-2jjx-rM5e5lbEpRum1j2eTtWzTrCxDxGXAU0okoriIgnTdGA/exec';
+
+    let data = []; // все данные
+    let currentPage = 1;
+    const rowsPerPage = 10;
+
+    function formatDate(dateString) {
+        const date = new Date(dateString);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}.${month}.${year}`;
+    }
+
+    function displayTable(page) {
+        const tableBody = document.querySelector('#dataTable tbody');
+        tableBody.innerHTML = ''; // очищаем таблицу
+
+        const start = (page - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+        const pageData = data.slice(start, end);
+
+        pageData.forEach(row => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${formatDate(row.date)}</td>
+                <td>${row.user}</td>
+                <td>${row.electricityT1}</td>
+                <td>${row.electricityT2}</td>
+                <td>${row.water}</td>
+                <td>${row.gas}</td>
+            `;
+            tableBody.appendChild(tr);
+        });
+    }
+
+    function setupPagination() {
+        const pagination = document.createElement('div');
+        pagination.id = 'pagination';
+
+        const totalPages = Math.ceil(data.length / rowsPerPage);
+
+        const prevBtn = document.createElement('button');
+        prevBtn.textContent = '← Назад';
+        prevBtn.disabled = currentPage === 1;
+        prevBtn.onclick = () => {
+            if (currentPage > 1) {
+                currentPage--;
+                displayTable(currentPage);
+                updateButtons();
+            }
+        };
+
+        const nextBtn = document.createElement('button');
+        nextBtn.textContent = 'Вперед →';
+        nextBtn.disabled = currentPage === totalPages;
+        nextBtn.onclick = () => {
+            if (currentPage < totalPages) {
+                currentPage++;
+                displayTable(currentPage);
+                updateButtons();
+            }
+        };
+
+        pagination.appendChild(prevBtn);
+        pagination.appendChild(document.createTextNode(` Страница ${currentPage} из ${totalPages} `));
+        pagination.appendChild(nextBtn);
+
+        document.querySelector('.table-container').appendChild(pagination);
+
+        function updateButtons() {
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = currentPage === totalPages;
+            pagination.childNodes[1].textContent = ` Страница ${currentPage} из ${totalPages} `;
+        }
+    }
+
+    fetch(url)
+        .then(response => response.json())
+        .then(jsonData => {
+            data = jsonData;
+            displayTable(currentPage);
+            setupPagination();
+        })
+        .catch(error => {
+            console.error('Ошибка при получении данных:', error);
+        });
+</script>
+
+    
+    <!-- Нижняя панель навигации -->
+    <nav class="bottom-nav">
+        <ul>
+            <li>
+                <a href="index.html" class="btn">
+                    <i class="material-icons">home</i>
+                    <span>Главная</span>
+                </a>
+            </li>
+            <li>
+                <a href="history.html" class="btn">
+                    <i class="material-icons">history</i>
+                    <span>История</span>
+                </a>
+            </li>
+            <li>
+                <a href="tarify.html" class="btn">
+                    <i class="material-icons">attach_money</i>
+                    <span>Тарифы</span>
+                </a>
+            </li>
+            <li>
+                <a href="#notifications" class="btn-floating">
+                    <i class="material-icons">notifications</i>
+                    <span>Уведомления</span>
+                </a>
+            </li>
+            <li>
+                <a href="#settings" class="btn-floating">
+                    <i class="material-icons">settings</i>
+                    <span>Настройки</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</body>
+</html>
