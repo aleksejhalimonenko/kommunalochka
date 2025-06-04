@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Сравнение партнерок такси</title>
+<style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+      Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    margin: 20px;
+    background: #f4f4f4;
+    color: #1d1d1f;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  h1, h2 {
+    color: #1d1d1f;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  label {
+    font-weight: 500;
+    display: block;
+    margin-bottom: 8px;
+  }
+  input[type="number"] {
+    padding: 10px 12px;
+    font-size: 1rem;
+    width: 160px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+    transition: border-color 0.2s ease;
+    -webkit-appearance: none;
+    -moz-appearance: textfield;
+  }
+  input[type="number"]:focus {
+    outline: none;
+    border-color: #007aff;
+    box-shadow: 0 0 5px #007aff;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    max-width: 900px;
+    margin: 15px 0 5px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgb(60 64 67 / 0.3);
+    overflow: hidden;
+  }
+  th, td {
+    border-bottom: 1px solid #e1e1e1;
+    padding: 12px 16px;
+    text-align: right;
+    font-weight: 400;
+  }
+  th {
+    background-color: #007aff;
+    color: white;
+    font-weight: 600;
+    text-align: left;
+  }
+  td:first-child, th:first-child {
+    text-align: left;
+  }
+  .explanation {
+    background: white;
+    border: 1px solid #d1d1d6;
+    padding: 15px 20px;
+    margin-bottom: 30px;
+    max-width: 900px;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgb(60 64 67 / 0.15);
+    font-size: 0.95rem;
+    color: #3c3c4399;
+  }
+  .explanation h3 {
+    margin-top: 0;
+    font-weight: 600;
+    color: #1d1d1f;
+  }
+  .explanation ul {
+    padding-left: 20px;
+    margin: 8px 0 0;
+  }
+  .explanation ul li {
+    margin-bottom: 6px;
+  }
+  #results > div {
+    margin-bottom: 40px;
+  }
+  p {
+    max-width: 700px;
+  }
+</style>
+</head>
+<body>
+
+<h1>Сравнение партнерок такси</h1>
+
+<div class="explanation">
+<ul>Для связи: aleksejhalimonenko@gmail.com</ul>
+  <h3>Условия расчёта:</h3>
+  <ul>
+    <li><b>NETTO</b> — чистый доход водителя (до вычета комиссий, налогов и расходов).</li>
+    <li><b>MojeTaxi (1 партнёрка):</b> комиссия 11% от NETTO, еженедельный платёж за приложение 75 зл, ЗУС 58 зл/неделя, удержание 11% VAT с бонусов (450 зл/месяц).</li>
+    <li><b>Freeze (2 партнёрка):</b> комиссия 8% от NETTO, приложение 60 зл/неделя, ЗУС 350 зл/месяц, возврат топлива около 100 зл/месяц, удержание 8% VAT и 23% налог с бонусов (450 зл/месяц).</li>
+    <li><b>Freeze без возврата топлива:</b> как выше, но без выплаты за топливо.</li>
+    <li><b>BRL (3 партнёрка):</b> фиксированный VAT 200 зл/неделя, бухгалтер 80 зл/месяц, ЗУС 230 зл/месяц, 23% VAT с бонусов.</li>
+    <li><b>BRL (4 партнёрка):</b> VAT 5.6% от NETTO, приложение 60 зл/неделя, бухгалтер 80 зл/месяц, ЗУС 230 зл/месяц, 23% VAT с бонусов.</li>
+    <li><b>Месяц</b> условно приравнивается к 4,3 недели.</li>
+  </ul>
+</div>
+
+<label for="netInput">Введите NETTO за неделю (злотых): </label>
+<input type="number" id="netInput" value="2800" min="0" step="10" />
+
+<div id="results"></div>
+
+<script>
+  const weeksInMonth = 4.3;
+  const bonusNetMonthly = 450;
+
+  function formatZl(value) {
+    return value.toFixed(2) + ' zł';
+  }
+
+  function calculate(netWeek) {
+    const netMonth = netWeek * weeksInMonth;
+
+    // MojeTaxi (1 партнерка)
+    const vatMojeTaxi = 0.11; // 11% от NET
+    const appMojeTaxiWeek = 75;
+    const zusMojeTaxiWeek = 58;
+    const bonusVatMojeTaxi = 0.11;
+
+    // Freeze с возвратом топлива (2 партнерка)
+    const vatFreeze = 0.08; // 8% от NET
+    const appFreezeWeek = 60;
+    const zusFreezeMonth = 350;
+    const fuelReturn = 100;
+    const bonusVatFreeze = 0.08;
+    const bonusTaxFreeze = 0.23;
+
+    // Freeze без возврата топлива (3 партнерка)
+    const fuelReturnNo = 0;
+
+    // BRL фиксированный VAT (4 партнерка)
+    const vatBRLFixedWeek = 200;
+    const accountantBRLFixedMonth = 80;
+    const zusBRLFixedMonth = 230;
+    const bonusVatBRLFixed = 0.23;
+
+    // BRL процентный VAT (5 партнерка)
+    const vatBRLPercent = 0.056; // 5.6% от NET
+    const appBRLPercentWeek = 60;
+    const accountantBRLPercentMonth = 80;
+    const zusBRLPercentMonth = 230;
+    const bonusVatBRLPercent = 0.23;
+
+    // --- MojeTaxi ---
+    const commissionMojeTaxiWeek = netWeek * vatMojeTaxi;
+    const zusMojeTaxi = zusMojeTaxiWeek;
+    const appMojeTaxi = appMojeTaxiWeek;
+    const bonusTaxMojeTaxiMonth = bonusNetMonthly * bonusVatMojeTaxi;
+
+    const netAfterCommMojeTaxiWeek = netWeek - commissionMojeTaxiWeek - zusMojeTaxi - appMojeTaxi;
+    const netAfterCommMojeTaxiMonth = netMonth
+      - commissionMojeTaxiWeek * weeksInMonth
+      - zusMojeTaxiWeek * weeksInMonth
+      - appMojeTaxiWeek * weeksInMonth
+      - bonusTaxMojeTaxiMonth;
+
+    // --- Freeze с возвратом ---
+    const commissionFreezeWeek = netWeek * vatFreeze;
+    const zusFreeze = zusFreezeMonth / weeksInMonth;
+    const appFreeze = appFreezeWeek;
+    const bonusVatFreezeMonth = bonusNetMonthly * bonusVatFreeze;
+    const bonusTaxFreezeMonth = (bonusNetMonthly - bonusVatFreezeMonth) * bonusTaxFreeze;
+    const bonusTotalFreezeMonth = bonusVatFreezeMonth + bonusTaxFreezeMonth;
+    const bonusTotalFreezeWeek = bonusTotalFreezeMonth / weeksInMonth;
+
+    const netAfterCommFreezeWeek = netWeek - commissionFreezeWeek - zusFreeze - appFreeze;
+    const netAfterCommFreezeMonth = netMonth
+      - commissionFreezeWeek * weeksInMonth
+      - zusFreezeMonth
+      - appFreezeWeek * weeksInMonth
+      - bonusTotalFreezeMonth
+      + fuelReturn;
+
+    // --- Freeze без возврата ---
+    const netAfterCommFreezeNoFuelWeek = netWeek - commissionFreezeWeek - zusFreeze - appFreeze;
+    const netAfterCommFreezeNoFuelMonth = netMonth
+      - commissionFreezeWeek * weeksInMonth
+      - zusFreezeMonth
+      - appFreezeWeek * weeksInMonth
+      - bonusTotalFreezeMonth;
+
+    // --- BRL фиксированный VAT ---
+    const commissionBRLFixedWeek = vatBRLFixedWeek;
+    const accountantBRLFixed = accountantBRLFixedMonth / weeksInMonth;
+    const zusBRLFixed = zusBRLFixedMonth / weeksInMonth;
+    const bonusTaxBRLFixedMonth = bonusNetMonthly * bonusVatBRLFixed;
+    const bonusTaxBRLFixedWeek = bonusTaxBRLFixedMonth / weeksInMonth;
+
+    const netAfterCommBRLFixedWeek = netWeek - commissionBRLFixedWeek - accountantBRLFixed - zusBRLFixed;
+    const netAfterCommBRLFixedMonth = netMonth
+      - commissionBRLFixedWeek * weeksInMonth
+      - accountantBRLFixedMonth
+      - zusBRLFixedMonth
+      - bonusTaxBRLFixedMonth;
+
+    // --- BRL процентный VAT ---
+    const commissionBRLPercentWeek = netWeek * vatBRLPercent;
+    const appBRLPercent = appBRLPercentWeek;
+    const accountantBRLPercent = accountantBRLPercentMonth / weeksInMonth;
+    const zusBRLPercent = zusBRLPercentMonth / weeksInMonth;
+    const bonusTaxBRLPercentMonth = bonusNetMonthly * bonusVatBRLPercent;
+    const bonusTaxBRLPercentWeek = bonusTaxBRLPercentMonth / weeksInMonth;
+
+    const netAfterCommBRLPercentWeek = netWeek - commissionBRLPercentWeek - appBRLPercent - accountantBRLPercent - zusBRLPercent;
+    const netAfterCommBRLPercentMonth = netMonth
+      - commissionBRLPercentWeek * weeksInMonth
+      - appBRLPercentWeek * weeksInMonth
+      - accountantBRLPercentMonth
+      - zusBRLPercentMonth
+      - bonusTaxBRLPercentMonth;
+
+    return {
+      week: {
+        netWeek,
+        MojeTaxi: netAfterCommMojeTaxiWeek,
+        FreezeReturn: netAfterCommFreezeWeek,
+        FreezeNoReturn: netAfterCommFreezeNoFuelWeek,
+        BRLFixed: netAfterCommBRLFixedWeek,
+        BRLPercent: netAfterCommBRLPercentWeek,
+        details: {
+          MojeTaxi: {
+            commission: commissionMojeTaxiWeek,
+            zus: zusMojeTaxi,
+            app: appMojeTaxi,
+            bonusTax: bonusTaxMojeTaxiMonth / weeksInMonth
+          },
+          FreezeReturn: {
+            commission: commissionFreezeWeek,
+            zus: zusFreeze,
+            app: appFreeze,
+            bonusTax: bonusTotalFreezeWeek,
+            fuelReturn: fuelReturn / weeksInMonth
+          },
+          FreezeNoReturn: {
+            commission: commissionFreezeWeek,
+            zus: zusFreeze,
+            app: appFreeze,
+            bonusTax: bonusTotalFreezeWeek,
+            fuelReturn: 0
+          },
+          BRLFixed: {
+            commission: commissionBRLFixedWeek,
+            accountant: accountantBRLFixed,
+            zus: zusBRLFixed,
+            bonusTax: bonusTaxBRLFixedWeek
+          },
+          BRLPercent: {
+            commission: commissionBRLPercentWeek,
+            app: appBRLPercent,
+            accountant: accountantBRLPercent,
+            zus: zusBRLPercent,
+            bonusTax: bonusTaxBRLPercentWeek
+          }
+        }
+      },
+      month: {
+        netMonth,
+        MojeTaxi: netAfterCommMojeTaxiMonth,
+        FreezeReturn: netAfterCommFreezeMonth,
+        FreezeNoReturn: netAfterCommFreezeNoFuelMonth,
+        BRLFixed: netAfterCommBRLFixedMonth,
+        BRLPercent: netAfterCommBRLPercentMonth,
+        details: {
+          MojeTaxi: {
+            commission: commissionMojeTaxiWeek * weeksInMonth,
+            zus: zusMojeTaxiWeek * weeksInMonth,
+            app: appMojeTaxiWeek * weeksInMonth,
+            bonusTax: bonusTaxMojeTaxiMonth
+          },
+          FreezeReturn: {
+            commission: commissionFreezeWeek * weeksInMonth,
+            zus: zusFreezeMonth,
+            app: appFreezeWeek * weeksInMonth,
+            bonusTax: bonusTotalFreezeMonth,
+            fuelReturn: fuelReturn
+          },
+          FreezeNoReturn: {
+            commission: commissionFreezeWeek * weeksInMonth,
+            zus: zusFreezeMonth,
+            app: appFreezeWeek * weeksInMonth,
+            bonusTax: bonusTotalFreezeMonth,
+            fuelReturn: 0
+          },
+          BRLFixed: {
+            commission: commissionBRLFixedWeek * weeksInMonth,
+            accountant: accountantBRLFixedMonth,
+            zus: zusBRLFixedMonth,
+            bonusTax: bonusTaxBRLFixedMonth
+          },
+          BRLPercent: {
+            commission: commissionBRLPercentWeek * weeksInMonth,
+            app: appBRLPercentWeek * weeksInMonth,
+            accountant: accountantBRLPercentMonth,
+            zus: zusBRLPercentMonth,
+            bonusTax: bonusTaxBRLPercentMonth
+          }
+        }
+      }
+    };
+  }
+
+  function renderResults(data) {
+    const container = document.getElementById('results');
+    container.innerHTML = '';
+
+    const weekDiv = document.createElement('div');
+    weekDiv.innerHTML = `
+      <h2>Результаты за неделю</h2>
+      <table>
+        <thead>
+          <tr><th>Показатель</th><th>MojeTaxi (11% VAT)</th><th>Freeze (8% VAT)+топливо</th><th>Freeze (8% VAT)</th><th>BRL (фикс VAT 200)</th><th>BRL (5,6% VAT)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Чистый netto</td><td>${formatZl(data.week.netWeek)}</td><td>${formatZl(data.week.netWeek)}</td><td>${formatZl(data.week.netWeek)}</td><td>${formatZl(data.week.netWeek)}</td><td>${formatZl(data.week.netWeek)}</td></tr>
+          <tr><td>Комиссия (vat)</td><td>${formatZl(data.week.details.MojeTaxi.commission)}</td><td>${formatZl(data.week.details.FreezeReturn.commission)}</td><td>${formatZl(data.week.details.FreezeNoReturn.commission)}</td><td>${formatZl(data.week.details.BRLFixed.commission)}</td><td>${formatZl(data.week.details.BRLPercent.commission)}</td></tr>
+          <tr><td>ZUS</td><td>${formatZl(data.week.details.MojeTaxi.zus)}</td><td>${formatZl(data.week.details.FreezeReturn.zus)}</td><td>${formatZl(data.week.details.FreezeNoReturn.zus)}</td><td>${formatZl(data.week.details.BRLFixed.zus)}</td><td>${formatZl(data.week.details.BRLPercent.zus)}</td></tr>
+          <tr><td>Плата за приложение</td><td>${formatZl(data.week.details.MojeTaxi.app)}</td><td>${formatZl(data.week.details.FreezeReturn.app)}</td><td>${formatZl(data.week.details.FreezeNoReturn.app)}</td><td>—</td><td>${formatZl(data.week.details.BRLPercent.app)}</td></tr>
+          <tr><td>Бухгалтер</td><td>—</td><td>—</td><td>—</td><td>${formatZl(data.week.details.BRLFixed.accountant)}</td><td>${formatZl(data.week.details.BRLPercent.accountant)}</td></tr>
+          <tr><td>Налог с бонусов</td><td>${formatZl(data.week.details.MojeTaxi.bonusTax)}</td><td>${formatZl(data.week.details.FreezeReturn.bonusTax)}</td><td>${formatZl(data.week.details.FreezeNoReturn.bonusTax)}</td><td>${formatZl(data.week.details.BRLFixed.bonusTax)}</td><td>${formatZl(data.week.details.BRLPercent.bonusTax)}</td></tr>
+          <tr><td>Возврат за топливо</td><td>—</td><td>${formatZl(data.week.details.FreezeReturn.fuelReturn)}</td><td>—</td><td>—</td><td>—</td></tr>
+          <tr style="font-weight:700; border-top:2px solid #007aff;"><td>Итого чистыми</td><td>${formatZl(data.week.MojeTaxi)}</td><td>${formatZl(data.week.FreezeReturn)}</td><td>${formatZl(data.week.FreezeNoReturn)}</td><td>${formatZl(data.week.BRLFixed)}</td><td>${formatZl(data.week.BRLPercent)}</td></tr>
+        </tbody>
+      </table>
+    `;
+
+    const monthDiv = document.createElement('div');
+    monthDiv.innerHTML = `
+      <h2>Результаты за месяц (≈ 4,3 недели)</h2>
+      <table>
+        <thead>
+          <tr><th>Показатель</th><th>MojeTaxi</th><th>Freeze (с возвратом)</th><th>Freeze (без возврата)</th><th>BRL (фикс VAT)</th><th>BRL (% VAT)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Чистый netto</td><td>${formatZl(data.month.netMonth)}</td><td>${formatZl(data.month.netMonth)}</td><td>${formatZl(data.month.netMonth)}</td><td>${formatZl(data.month.netMonth)}</td><td>${formatZl(data.month.netMonth)}</td></tr>
+          <tr><td>Комиссия vat</td><td>${formatZl(data.month.details.MojeTaxi.commission)}</td><td>${formatZl(data.month.details.FreezeReturn.commission)}</td><td>${formatZl(data.month.details.FreezeNoReturn.commission)}</td><td>${formatZl(data.month.details.BRLFixed.commission)}</td><td>${formatZl(data.month.details.BRLPercent.commission)}</td></tr>
+          <tr><td>ZUS</td><td>${formatZl(data.month.details.MojeTaxi.zus)}</td><td>${formatZl(data.month.details.FreezeReturn.zus)}</td><td>${formatZl(data.month.details.FreezeNoReturn.zus)}</td><td>${formatZl(data.month.details.BRLFixed.zus)}</td><td>${formatZl(data.month.details.BRLPercent.zus)}</td></tr>
+          <tr><td>Плата за приложение</td><td>${formatZl(data.month.details.MojeTaxi.app)}</td><td>${formatZl(data.month.details.FreezeReturn.app)}</td><td>${formatZl(data.month.details.FreezeNoReturn.app)}</td><td>—</td><td>${formatZl(data.month.details.BRLPercent.app)}</td></tr>
+          <tr><td>Бухгалтер</td><td>—</td><td>—</td><td>—</td><td>${formatZl(data.month.details.BRLFixed.accountant)}</td><td>${formatZl(data.month.details.BRLPercent.accountant)}</td></tr>
+          <tr><td>Налог с бонусов</td><td>${formatZl(data.month.details.MojeTaxi.bonusTax)}</td><td>${formatZl(data.month.details.FreezeReturn.bonusTax)}</td><td>${formatZl(data.month.details.FreezeNoReturn.bonusTax)}</td><td>${formatZl(data.month.details.BRLFixed.bonusTax)}</td><td>${formatZl(data.month.details.BRLPercent.bonusTax)}</td></tr>
+          <tr><td>Возврат за топливо</td><td>—</td><td>${formatZl(data.month.details.FreezeReturn.fuelReturn)}</td><td>—</td><td>—</td><td>—</td></tr>
+          <tr style="font-weight:700; border-top:2px solid #007aff;"><td>Итого чистыми</td><td>${formatZl(data.month.MojeTaxi)}</td><td>${formatZl(data.month.FreezeReturn)}</td><td>${formatZl(data.month.FreezeNoReturn)}</td><td>${formatZl(data.month.BRLFixed)}</td><td>${formatZl(data.month.BRLPercent)}</td></tr>
+        </tbody>
+      </table>
+    `;
+
+    container.appendChild(weekDiv);
+    container.appendChild(monthDiv);
+  }
+
+  const input = document.getElementById('netInput');
+  input.addEventListener('input', () => {
+    const val = parseFloat(input.value);
+    if (!isNaN(val) && val >= 0) {
+      const data = calculate(val);
+      renderResults(data);
+    }
+  });
+
+  // Инициализация
+  renderResults(calculate(parseFloat(input.value)));
+</script>
+
+</body>
+</html>
