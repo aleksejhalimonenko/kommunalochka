@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Генератор PDF-фактур</title>
+    <!-- Подключаем Tailwind CSS для стилей -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Общие стили для центрирования и фона */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 1rem;
+        }
+
+        /* Дополнительные стили для анимации загрузки */
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+    <div class="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full mx-auto">
+        <h1 class="text-3xl font-bold text-center mb-6 text-gray-800">Создание PDF-фактуры</h1>
+        <p class="text-center text-gray-600 mb-8">
+            Заполните форму, чтобы сгенерировать и получить PDF-документ прямо в чате Telegram.
+        </p>
+        
+        <form id="invoiceForm" class="space-y-6">
+            <div>
+                <label for="date" class="block text-sm font-medium text-gray-700 mb-1">Дата</label>
+                <input type="text" id="date" name="date" placeholder="Например, 01.01.2024" required
+                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out">
+            </div>
+
+            <div>
+                <label for="model" class="block text-sm font-medium text-gray-700 mb-1">Модель автомобиля</label>
+                <input type="text" id="model" name="model" placeholder="Например, BMW X5" required
+                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out">
+            </div>
+
+            <div>
+                <label for="numbers" class="block text-sm font-medium text-gray-700 mb-1">Регистрационный номер</label>
+                <input type="text" id="numbers" name="numbers" placeholder="Например, AB123CD" required
+                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out">
+            </div>
+
+            <div>
+                <label for="name_surname" class="block text-sm font-medium text-gray-700 mb-1">Имя и Фамилия</label>
+                <input type="text" id="name_surname" name="name_surname" placeholder="Например, Иван Иванов" required
+                       class="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 transition duration-150 ease-in-out">
+            </div>
+
+            <button type="submit" id="submitButton"
+                    class="w-full flex justify-center items-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out shadow-lg">
+                <span id="buttonText">Сгенерировать PDF</span>
+                <div id="loader" class="loader hidden ml-2"></div>
+            </button>
+        </form>
+
+        <div id="statusMessage" class="mt-4 text-center text-sm font-medium hidden"></div>
+
+    </div>
+
+    <script>
+        // Проверка, что скрипт запущен в контексте Telegram Web App
+        if (!window.Telegram || !window.Telegram.WebApp) {
+            alert('Это приложение должно быть запущено в Telegram.');
+        } else {
+            // Инициализация Telegram Web App
+            window.Telegram.WebApp.ready();
+            // Делаем страницу видимой только после готовности
+            document.body.style.display = 'flex';
+        }
+
+        // --- ВАЖНО: Замените этот URL на URL вашего развернутого Google Apps Script ---
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbyVpXJub2Q3LO1hRna3NMwKO45kZcjhxU2vC8KK0RlXKs_NWzbuPJueMX5pOnUASLun/exec';
+        // ----------------------------------------------------------------------------------
+
+        const form = document.getElementById('invoiceForm');
+        const submitButton = document.getElementById('submitButton');
+        const buttonText = document.getElementById('buttonText');
+        const loader = document.getElementById('loader');
+        const statusMessage = document.getElementById('statusMessage');
+
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const formData = new FormData(form);
+            const data = {};
+            formData.forEach((value, key) => {
+                data[key] = value;
+            });
+            
+            // Добавляем маркер, чтобы Google Apps Script знал, что это запрос из Web App
+            data['source'] = 'webapp';
+
+            // Добавляем user_id из Telegram Web App
+            if (window.Telegram && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
+                data['chatId'] = window.Telegram.WebApp.initDataUnsafe.user.id;
+            } else {
+                statusMessage.textContent = 'Ошибка: не удалось получить ID пользователя Telegram.';
+                statusMessage.className = 'mt-4 text-center text-sm font-medium text-red-500';
+                statusMessage.style.display = 'block';
+                return;
+            }
+            
+            submitButton.disabled = true;
+            buttonText.textContent = 'Отправка...';
+            loader.classList.remove('hidden');
+            statusMessage.style.display = 'none';
+
+            try {
+                const response = await fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+                
+                statusMessage.textContent = 'Данные отправлены! Скоро вы получите PDF-файл в чате.';
+                statusMessage.className = 'mt-4 text-center text-sm font-medium text-green-600';
+                
+                window.Telegram.WebApp.close();
+
+            } catch (error) {
+                console.error('Ошибка при отправке данных:', error);
+                statusMessage.textContent = 'Произошла ошибка при отправке данных.';
+                statusMessage.className = 'mt-4 text-center text-sm font-medium text-red-500';
+            } finally {
+                submitButton.disabled = false;
+                buttonText.textContent = 'Сгенерировать PDF';
+                loader.classList.add('hidden');
+                statusMessage.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
