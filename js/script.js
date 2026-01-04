@@ -4,6 +4,8 @@ tg.expand();
 
 const URL_SCRIPT = 'https://script.google.com/macros/s/AKfycbxO37_wj9dveyG5psxdS2Em_r8oRUxZxNRGDZ1VkXXAlK5Wxq4j3-PEt0sc2eqoeDLzkw/exec';
 
+let verifiedIds = []; // Масив для верифікованих ID
+
 const i18n = {
     uk: {
         home_title: "Передача показників",
@@ -29,7 +31,8 @@ const i18n = {
         error_prefix: "Помилка",
         wait: "Зачекайте",
         sec: "сек",
-        success_msg: "<b>Готово!</b> Дані збережено."
+        success_msg: "<b>Готово!</b> Дані збережено.",
+        access_denied: "Доступ обмежено. Ви не є верифікованим користувачем."
     },
     ru: {
         home_title: "Передача показаний",
@@ -55,34 +58,41 @@ const i18n = {
         error_prefix: "Ошибка",
         wait: "Подождите",
         sec: "сек",
-        success_msg: "<b>Готово!</b> Данные сохранены."
+        success_msg: "<b>Готово!</b> Данные сохранены.",
+        access_denied: "Доступ ограничен. Вы не являетесь верифицированным пользователем."
     }
 };
 
-// Функція отримання поточної мови
+// Функція завантаження верифікованих ID з історії
+async function fetchVerifiedUsers() {
+    try {
+        const response = await fetch(`${URL_SCRIPT}?action=getHistory`);
+        const data = await response.json();
+        // Витягуємо ID з рядків типу "Ім'я (ID: 12345678)"
+        verifiedIds = data.map(row => {
+            const match = row.user ? row.user.match(/\(ID:\s*(\d+)\)/) : null;
+            return match ? match[1] : null;
+        }).filter(id => id !== null);
+    } catch (e) {
+        console.error("Помилка верифікації користувачів", e);
+    }
+}
+
 function getCurrLang() {
     return localStorage.getItem('appLang') || 'uk';
 }
 
-// Функція зміни мови
 function setLanguage(lang) {
     localStorage.setItem('appLang', lang);
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
         if (i18n[lang][key]) {
-            if (el.tagName === 'LABEL' || el.tagName === 'SPAN' || el.tagName === 'TH' || el.tagName === 'H2') {
-                el.innerText = i18n[lang][key];
-            } else if (el.tagName === 'BUTTON' && !el.classList.contains('loading')) {
-                el.innerText = i18n[lang][key];
-            } else {
-                el.innerText = i18n[lang][key];
-            }
+            el.innerText = i18n[lang][key];
         }
     });
 }
 
-// При завантаженні сторінки
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     const savedLang = getCurrLang();
     const langSelect = document.getElementById('langSelect');
     if (langSelect) {
@@ -93,9 +103,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const closeBtn = document.getElementById('closeBtn');
     if (closeBtn) closeBtn.addEventListener('click', () => tg.close());
+
+    // Завантажуємо список дозволених ID при старті
+    await fetchVerifiedUsers();
 });
 
-// Форматування дати
 function formatDate(dateStr) {
     if (!dateStr) return '-';
     const date = new Date(dateStr);
@@ -105,9 +117,21 @@ function formatDate(dateStr) {
 }
 
 function showPage(pageId) {
+    const lang = getCurrLang();
+    const user = tg.initDataUnsafe?.user;
+    const currentUserId = user ? String(user.id) : "000";
+    const isVerified = verifiedIds.includes(currentUserId);
+
+    // Блокування Налаштувань для гостей
+    if (pageId === 'settings' && !isVerified) {
+        tg.showAlert(i18n[lang].access_denied);
+        return;
+    }
+
     document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
     document.getElementById(pageId).style.display = 'block';
     document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+    
     const activeNav = document.getElementById('nav-' + pageId);
     if(activeNav) activeNav.classList.add('active');
 
@@ -118,7 +142,8 @@ function showPage(pageId) {
 function loadData(action, tableId) {
     const lang = getCurrLang();
     const tbody = document.querySelector(`#${tableId} tbody`);
-    tbody.innerHTML = `<tr><td colspan="13" style="text-align:center;">${i18n[lang].loading}</td></tr>`;
+    const colCount = tableId === 'historyTable' ? 6 : 13;
+    tbody.innerHTML = `<tr><td colspan="${colCount}" style="text-align:center;">${i18n[lang].loading}</td></tr>`;
 
     const url = action === 'getTariffs' ? `${URL_SCRIPT}?sheet=tarify` : `${URL_SCRIPT}?action=${action}`;
 
@@ -126,10 +151,7 @@ function loadData(action, tableId) {
         .then(res => res.json())
         .then(data => {
             tbody.innerHTML = '';
-            
-            // --- ДОБАВЛЯЕМ ЭТУ СТРОКУ ---
-            data.reverse(); // Переворачиваем массив: новые записи станут первыми
-            // ---------------------------
+            data.reverse(); 
 
             data.forEach(row => {
                 const tr = document.createElement('tr');
@@ -143,7 +165,6 @@ function loadData(action, tableId) {
                         <td>${row.gas || '-'}</td>
                     `;
                 } else {
-                    // Код для таблицы тарифов остается таким же
                     tr.innerHTML = `
                         <td>${formatDate(row.date)}</td>
                         <td>${row.t1 || '-'}</td>
@@ -164,13 +185,22 @@ function loadData(action, tableId) {
             });
         })
         .catch(() => {
-            tbody.innerHTML = `<tr><td colspan="13" style="text-align:center; color:red;">${i18n[lang].error_load}</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="${colCount}" style="text-align:center; color:red;">${i18n[lang].error_load}</td></tr>`;
         });
 }
 
 document.getElementById('utilityForm').addEventListener('submit', function(e) {
     e.preventDefault();
     const lang = getCurrLang();
+    const user = tg.initDataUnsafe?.user;
+    const currentUserId = user ? String(user.id) : "000";
+
+    // ПЕРЕВІРКА ВЕРИФІКАЦІЇ ПЕРЕД ВІДПРАВКОЮ
+    if (!verifiedIds.includes(currentUserId)) {
+        tg.showAlert(i18n[lang].access_denied);
+        return;
+    }
+
     const submitBtn = document.getElementById('submitBtn');
     const responseDiv = document.getElementById('response');
 
@@ -178,23 +208,15 @@ document.getElementById('utilityForm').addEventListener('submit', function(e) {
     submitBtn.classList.add('loading');
 
     const formData = new URLSearchParams(new FormData(this));
-
-    // --- ПОЛУЧАЕМ ДАННЫЕ ИЗ TELEGRAM ---
-    const user = tg.initDataUnsafe?.user;
     const userName = user ? `${user.first_name} ${user.last_name || ''}`.trim() : 'Неизвестный';
-    const userId = user ? user.id : '000';
-
-    // Отправляем в таблицу и имя, и ID (через пробел или в разные колонки, если подправишь GAS)
-    formData.append('user', `${userName} (ID: ${userId})`); 
-    // -----------------------------------
+    
+    formData.append('user', `${userName} (ID: ${currentUserId})`); 
 
     fetch(URL_SCRIPT, {
         method: 'POST',
         body: formData,
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
     })
-	
-	
     .then(res => res.json())
     .then(data => {
         responseDiv.style.display = 'block';
