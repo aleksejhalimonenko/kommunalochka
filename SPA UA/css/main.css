@@ -1,0 +1,239 @@
+/* === Единый стиль приложения "Коммуналочка" === */
+
+:root {
+    --primary-color: #0088cc;
+    --primary-hover: #0077b3;
+    --bg-color: #f4f4f4;
+    --card-bg: #ffffff;
+    --text-color: #333;
+    --border-color: #e0e0e0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    padding-bottom: 90px; /* Отступ под баром */
+}
+
+/* --- Шапка --- */
+.header {
+    display: flex;
+    justify-content: center;
+    padding: 15px 0;
+    background-color: #ffffff;
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.logo {
+    width: 80px;
+    height: auto;
+}
+
+/* --- Контейнеры --- */
+.container, .table-container {
+    max-width: 500px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: var(--card-bg);
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+h2 {
+    font-size: 20px;
+    font-weight: bold;
+    color: var(--primary-color);
+    text-align: center;
+    margin-top: 0;
+}
+
+/* --- Поля ввода --- */
+.input-field {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.input-field label {
+    position: absolute;
+    top: -10px;
+    left: 10px;
+    background: #ffffff;
+    padding: 0 5px;
+    font-size: 12px;
+    color: #666;
+}
+
+.input-field input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #fafafa;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+/* --- КНОПКА ОТПРАВКИ С УЛУЧШЕННОЙ АНИМАЦИЕЙ --- */
+button#submitBtn {
+    width: 100%;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    display: block;
+}
+
+/* Плавный блик (shimmer) */
+@keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* Естественное дыхание */
+@keyframes breathing {
+    0% { transform: scale(1); }
+    50% { transform: scale(0.99); }
+    100% { transform: scale(1); }
+}
+
+button#submitBtn.loading {
+    /* Бесшовный градиент для исключения синих пятен */
+    background: linear-gradient(110deg, 
+        #0088cc 30%, 
+        #66ccff 50%, 
+        #0088cc 70%) !important;
+    background-size: 200% 100% !important;
+    
+    /* Совмещаем блик и мягкую пульсацию */
+    animation: shimmer 1.5s infinite linear, breathing 2s infinite ease-in-out !important;
+    
+    cursor: not-allowed;
+    opacity: 1 !important;
+    box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
+}
+
+/* Кнопка в режиме ожидания (серая) */
+button#submitBtn:disabled:not(.loading) {
+    background-color: #b0bec5 !important;
+    opacity: 0.8;
+    cursor: not-allowed;
+}
+
+/* --- Блок уведомлений --- */
+.card-panel {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 12px;
+    font-size: 14px;
+    text-align: center;
+    background-color: #e3f2fd; 
+    color: #01579b;
+    border: 1px solid #bbdefb;
+    display: none;
+    font-weight: 500;
+}
+
+/* --- Таблицы --- */
+.table-container {
+    overflow-x: auto;
+    max-width: 95%;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 800px;
+}
+
+th, td {
+    padding: 12px 8px;
+    text-align: center;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+th {
+    background-color: #f8f8f8;
+    color: var(--primary-color);
+}
+
+/* --- НИЖНИЙ БАР (ВОССТАНОВЛЕННЫЙ) --- */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #ffffff;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 2000;
+    height: 70px;
+    display: flex;
+    align-items: center;
+}
+
+.bottom-nav ul {
+    display: flex;
+    justify-content: space-around;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+.bottom-nav li {
+    flex: 1;
+}
+
+.bottom-nav a {
+    text-decoration: none;
+    color: var(--primary-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    transition: 0.3s;
+}
+
+.bottom-nav i {
+    font-size: 26px;
+    width: 44px;
+    height: 44px;
+    line-height: 44px;
+    border-radius: 50%;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.bottom-nav a.active i, 
+.bottom-nav li a:hover i {
+    background-color: #e1f5fe;
+    color: var(--primary-hover);
+}
+
+.bottom-nav span {
+    font-size: 10px;
+    font-weight: 600;
+    margin-top: 2px;
+}
+
+/* Анимация страниц */
+.page { animation: fadeIn 0.3s ease; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+@media (max-width: 480px) {
+    .container { margin: 10px; }
+}
