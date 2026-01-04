@@ -1,147 +1,219 @@
+const tg = window.Telegram.WebApp;
+tg.ready();
+tg.expand();
 
-	 // Инициализация Telegram Web App API
-    if (!window.Telegram || !window.Telegram.WebApp) {
-    alert("Это приложение работает только внутри Telegram");
-    // Можно, например, скрыть весь контент или перенаправить:
-    document.body.innerHTML = "<h2>Открывайте это приложение в Telegram</h2>";
-  } else {
-    window.Telegram.WebApp.ready();
-	window.Telegram.WebApp.expand();  // Разворачиваем WebApp на весь экран
-	//window.Telegram.WebApp.MainButton.setText("Отправить данные");
-	//window.Telegram.WebApp.MainButton.show();
-	window.Telegram.WebApp.requestFullscreen();
-  }
-//не ммешает
-document.documentElement.requestFullscreen(); 
-  
-document.getElementById('utilityForm').addEventListener('submit', function(event) {
-  event.preventDefault();
+const URL_SCRIPT = 'https://script.google.com/macros/s/AKfycbxO37_wj9dveyG5psxdS2Em_r8oRUxZxNRGDZ1VkXXAlK5Wxq4j3-PEt0sc2eqoeDLzkw/exec';
 
-  const form = this;
-  const submitBtn = document.getElementById('submitBtn');
-    // Убираем переменную countdownSpan, она не нужна теперь
-   // const countdownSpan = document.getElementById('countdown');
-  const responseDiv = document.getElementById('response');
+const i18n = {
+    uk: {
+        home_title: "Передача показників",
+        history_title: "Історія показників",
+        tariffs_title: "Тарифи",
+        settings_title: "Налаштування",
+        label_t1: "Електроенергія Т1 (кВт)",
+        label_t2: "Електроенергія Т2 (кВт)",
+        label_water: "Вода (куб. м)",
+        label_gas: "Газ (куб. м)",
+        btn_send: "Відправити дані",
+        btn_expand: "Розгорнути",
+        btn_close: "Закрити",
+        nav_home: "Головна",
+        nav_history: "Історія",
+        nav_tariffs: "Тарифи",
+        nav_info: "Інфо",
+        nav_settings: "Налаштування",
+        select_lang: "Оберіть мову",
+        loading: "Завантаження...",
+        error_load: "Помилка завантаження",
+        error_network: "Помилка мережі",
+        error_prefix: "Помилка",
+        wait: "Зачекайте",
+        sec: "сек",
+        success_msg: "<b>Готово!</b> Дані збережено."
+    },
+    ru: {
+        home_title: "Передача показаний",
+        history_title: "История показаний",
+        tariffs_title: "Тарифы",
+        settings_title: "Настройки",
+        label_t1: "Электроэнергия Т1 (кВт)",
+        label_t2: "Электроэнергия Т2 (кВт)",
+        label_water: "Вода (куб. м)",
+        label_gas: "Газ (куб. м)",
+        btn_send: "Отправить данные",
+        btn_expand: "Развернуть",
+        btn_close: "Закрыть",
+        nav_home: "Главная",
+        nav_history: "История",
+        nav_tariffs: "Тарифы",
+        nav_info: "Инфо",
+        nav_settings: "Настройки",
+        select_lang: "Выберите язык",
+        loading: "Загрузка...",
+        error_load: "Ошибка загрузки",
+        error_network: "Ошибка сети",
+        error_prefix: "Ошибка",
+        wait: "Подождите",
+        sec: "сек",
+        success_msg: "<b>Готово!</b> Данные сохранены."
+    }
+};
 
-  // Если кнопка заблокирована — предупреждаем и выходим
-  if (submitBtn.disabled) {
-    alert('Данные уже отправлены. Пожалуйста, подождите перед повторной отправкой.');
-    return;
-  }
+// Функція отримання поточної мови
+function getCurrLang() {
+    return localStorage.getItem('appLang') || 'uk';
+}
 
-  // Блокируем кнопку, меняем текст и добавляем анимацию (через класс)
-  submitBtn.disabled = true;
-  submitBtn.innerText = 'Отправка...';
-  submitBtn.classList.add('loading'); // стиль для анимации — добавим ниже в CSS
-
-  const formData = new FormData(form);
-  formData.append('user', 'Admin');
-     
-
-
-  fetch('https://script.google.com/macros/s/AKfycbw4OVM_ltfYhgQ_QSio5aZ-3hMDtZFbUUFyrKuti22rjwikp-Bz2w_ckEn3cdy_7g8Ziw/exec')
-    .then(response => response.json())
-    .then(lastData => {
-      const newData = {
-        electricityt1: parseFloat(formData.get('electricityt1')),
-        electricityt2: parseFloat(formData.get('electricityt2')),
-        water: parseFloat(formData.get('water')),
-        gas: parseFloat(formData.get('gas')),
-		//date: formData.get('date')  // 👈 Дата без валидации
-      };
-
-      let errors = [];
-
-      if (newData.electricityt1 < lastData.electricityt1) {
-        errors.push('Электроэнергия T1 меньше предыдущего значения.скрипт сайта');
-      }
-      if (newData.electricityt2 < lastData.electricityt2) {
-        errors.push('Электроэнергия T2 меньше предыдущего значения.скрипт сайта');
-      }
-      if (newData.water < lastData.water) {
-        errors.push('Вода меньше предыдущего значения.скрипт сайта');
-      }
-      if (newData.gas < lastData.gas) {
-        errors.push('Газ меньше предыдущего значения.скрипт сайта');
-      }
-
-      if (errors.length > 0) {
-        responseDiv.style.display = 'block';
-        responseDiv.innerText = errors.join('\n');
-
-        // Разблокируем кнопку и убираем анимацию, возвращаем текст
-        submitBtn.disabled = false;
-        submitBtn.innerText = 'Отправить данные';
-        submitBtn.classList.remove('loading');
-      } else {
-        // Отправляем данные на сервер
-        const params = new URLSearchParams();
-        for (const pair of formData) {
-          params.append(pair[0], pair[1]);
+// Функція зміни мови
+function setLanguage(lang) {
+    localStorage.setItem('appLang', lang);
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (i18n[lang][key]) {
+            if (el.tagName === 'LABEL' || el.tagName === 'SPAN' || el.tagName === 'TH' || el.tagName === 'H2') {
+                el.innerText = i18n[lang][key];
+            } else if (el.tagName === 'BUTTON' && !el.classList.contains('loading')) {
+                el.innerText = i18n[lang][key];
+            } else {
+                el.innerText = i18n[lang][key];
+            }
         }
-
-        fetch('https://script.google.com/macros/s/AKfycbw4OVM_ltfYhgQ_QSio5aZ-3hMDtZFbUUFyrKuti22rjwikp-Bz2w_ckEn3cdy_7g8Ziw/exec', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8'
-          },
-          body: params.toString()
-        })
-        .then(response => response.json())
-        .then(data => {
-          responseDiv.style.display = 'block';
-          if (data.result === 'success') {
-            responseDiv.innerText = 'Дані успішно надіслані!';
-            form.reset();
-			
-            // === Изменения здесь: таймер теперь внутри кнопки ===
-            let timeLeft = 5;
-            submitBtn.disabled = true;
-
-            // Запускаем таймер, обновляем текст кнопки с отчётом
-            const timerId = setInterval(() => {
-              if (timeLeft > 0) {
-                submitBtn.innerText = `Зачекайте ${timeLeft} секунд(и)`;
-                timeLeft--;
-              } else {
-                clearInterval(timerId);
-                submitBtn.disabled = false;
-                submitBtn.innerText = 'Відправити дані';
-              }
-            }, 1000);
-          } else {
-            responseDiv.innerText = 'Помилка при відправці даних: ' + (data.message || 'Неизвестная ошибка');
-            submitBtn.disabled = false;
-            submitBtn.innerText = 'Отправить данные';
-          }
-          submitBtn.classList.remove('loading');
-		  
-		  
-        })
-        .catch(error => {
-          console.error('Ошибка:', error);
-          responseDiv.style.display = 'block';
-          responseDiv.innerText = 'Произошла ошибка при отправке данных.';
-          submitBtn.disabled = false;
-          submitBtn.innerText = 'Отправить данные';
-          submitBtn.classList.remove('loading');
-        });
-      }
-    })
-    .catch(error => {
-      console.error('Ошибка при получении последних данных:', error);
-      responseDiv.style.display = 'block';
-      responseDiv.innerText = 'Ошибка при получении последних данных.';
-      submitBtn.disabled = false;
-      submitBtn.innerText = 'Отправить данные';
-      submitBtn.classList.remove('loading');
     });
+}
+
+// При завантаженні сторінки
+document.addEventListener('DOMContentLoaded', () => {
+    const savedLang = getCurrLang();
+    const langSelect = document.getElementById('langSelect');
+    if (langSelect) {
+        langSelect.value = savedLang;
+        langSelect.addEventListener('change', (e) => setLanguage(e.target.value));
+    }
+    setLanguage(savedLang);
+
+    const closeBtn = document.getElementById('closeBtn');
+    if (closeBtn) closeBtn.addEventListener('click', () => tg.close());
 });
-// Обработчик кнопки "Закрыть"
-document.getElementById('closeBtn').addEventListener('click', function () {
-  if (window.Telegram && window.Telegram.WebApp) {
-    window.Telegram.WebApp.close();
-  } else {
-    alert("Кнопка работает только внутри Telegram.");
-  }
+
+// Форматування дати
+function formatDate(dateStr) {
+    if (!dateStr) return '-';
+    const date = new Date(dateStr);
+    if (isNaN(date)) return dateStr;
+    const lang = getCurrLang() === 'uk' ? 'uk-UA' : 'ru-RU';
+    return date.toLocaleDateString(lang);
+}
+
+function showPage(pageId) {
+    document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
+    document.getElementById(pageId).style.display = 'block';
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+    const activeNav = document.getElementById('nav-' + pageId);
+    if(activeNav) activeNav.classList.add('active');
+
+    if (pageId === 'history') loadData('getHistory', 'historyTable');
+    if (pageId === 'tarify') loadData('getTariffs', 'tarifyTable');
+}
+
+function loadData(action, tableId) {
+    const lang = getCurrLang();
+    const tbody = document.querySelector(`#${tableId} tbody`);
+    tbody.innerHTML = `<tr><td colspan="13" style="text-align:center;">${i18n[lang].loading}</td></tr>`;
+
+    const url = action === 'getTariffs' ? `${URL_SCRIPT}?sheet=tarify` : `${URL_SCRIPT}?action=${action}`;
+
+    fetch(url)
+        .then(res => res.json())
+        .then(data => {
+            tbody.innerHTML = '';
+            data.forEach(row => {
+                const tr = document.createElement('tr');
+                if (tableId === 'historyTable') {
+                    tr.innerHTML = `
+                        <td>${formatDate(row.date)}</td>
+                        <td>${row.user || 'Admin'}</td>
+                        <td>${row.electricityT1 || '-'}</td>
+                        <td>${row.electricityT2 || '-'}</td>
+                        <td>${row.water || '-'}</td>
+                        <td>${row.gas || '-'}</td>
+                    `;
+                } else {
+                    tr.innerHTML = `
+                        <td>${formatDate(row.date)}</td>
+                        <td>${row.t1 || '-'}</td>
+                        <td>${row.t2 || '-'}</td>
+                        <td>${row.waterCharge || '-'}</td>
+                        <td>${row.sewerCharge || '-'}</td>
+                        <td>${row.waterSupply || '-'}</td>
+                        <td>${row.sewerage || '-'}</td>
+                        <td>${row.maintenance || '-'}</td>
+                        <td>${row.gas || '-'}</td>
+                        <td>${row.gasDelivery || '-'}</td>
+                        <td>${row.rent || '-'}</td>
+                        <td>${row.wasteCollection || '-'}</td>
+                        <td>${row.heating || '-'}</td>
+                    `;
+                }
+                tbody.appendChild(tr);
+            });
+        })
+        .catch(() => {
+            tbody.innerHTML = `<tr><td colspan="13" style="text-align:center; color:red;">${i18n[lang].error_load}</td></tr>`;
+        });
+}
+
+document.getElementById('utilityForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const lang = getCurrLang();
+    const submitBtn = document.getElementById('submitBtn');
+    const responseDiv = document.getElementById('response');
+
+    submitBtn.disabled = true;
+    submitBtn.classList.add('loading');
+
+    const formData = new URLSearchParams(new FormData(this));
+    formData.append('user', 'Admin'); 
+
+    fetch(URL_SCRIPT, {
+        method: 'POST',
+        body: formData,
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+    })
+    .then(res => res.json())
+    .then(data => {
+        responseDiv.style.display = 'block';
+        if (data.result === 'success') {
+            responseDiv.innerHTML = i18n[lang].success_msg;
+            this.reset();
+            
+            let timeLeft = 5;
+            submitBtn.innerText = `${i18n[lang].wait} ${timeLeft} ${i18n[lang].sec}...`;
+            
+            const timerId = setInterval(() => {
+                timeLeft--;
+                if (timeLeft > 0) {
+                    submitBtn.innerText = `${i18n[lang].wait} ${timeLeft} ${i18n[lang].sec}...`;
+                } else {
+                    clearInterval(timerId);
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('loading');
+                    submitBtn.innerText = i18n[lang].btn_send;
+                    responseDiv.style.display = 'none';
+                }
+            }, 1000);
+
+        } else {
+            responseDiv.innerHTML = `<b>${i18n[lang].error_prefix}:</b> ` + data.message;
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('loading');
+            submitBtn.innerText = i18n[lang].btn_send;
+        }
+    })
+    .catch(() => {
+        responseDiv.style.display = 'block';
+        responseDiv.innerText = i18n[lang].error_network;
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('loading');
+        submitBtn.innerText = i18n[lang].btn_send;
+    });
 });
