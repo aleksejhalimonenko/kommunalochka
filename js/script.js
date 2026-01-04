@@ -172,13 +172,23 @@ document.getElementById('utilityForm').addEventListener('submit', function(e) {
     submitBtn.classList.add('loading');
 
     const formData = new URLSearchParams(new FormData(this));
-    formData.append('user', 'Admin'); 
+
+    // --- ПОЛУЧАЕМ ДАННЫЕ ИЗ TELEGRAM ---
+    const user = tg.initDataUnsafe?.user;
+    const userName = user ? `${user.first_name} ${user.last_name || ''}`.trim() : 'Неизвестный';
+    const userId = user ? user.id : '000';
+
+    // Отправляем в таблицу и имя, и ID (через пробел или в разные колонки, если подправишь GAS)
+    formData.append('user', `${userName} (ID: ${userId})`); 
+    // -----------------------------------
 
     fetch(URL_SCRIPT, {
         method: 'POST',
         body: formData,
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
     })
+	
+	
     .then(res => res.json())
     .then(data => {
         responseDiv.style.display = 'block';
