@@ -36,13 +36,32 @@ body {
 }
 
 /* --- Контейнеры --- */
-.container, .table-container {
-    max-width: 500px;
+.container {
+    max-width: 500px; /* Ограничение для форм */
     margin: 20px auto;
     padding: 20px;
     background-color: var(--card-bg);
     border-radius: 15px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Специальный контейнер для таблиц (адаптивный) */
+.table-container {
+    max-width: 500px; /* По умолчанию как у контейнера */
+    margin: 20px auto;
+    padding: 20px;
+    background-color: var(--card-bg);
+    border-radius: 15px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    overflow-x: auto;
+    box-sizing: border-box;
+}
+
+/* Расширение таблицы на ноутбуках */
+@media (min-width: 768px) {
+    .table-container {
+        max-width: 95%; 
+    }
 }
 
 h2 {
@@ -79,7 +98,7 @@ h2 {
     box-sizing: border-box;
 }
 
-/* --- КНОПКА ОТПРАВКИ С УЛУЧШЕННОЙ АНИМАЦИЕЙ --- */
+/* --- Кнопка отправки --- */
 button#submitBtn {
     width: 100%;
     background-color: var(--primary-color);
@@ -91,18 +110,14 @@ button#submitBtn {
     font-weight: bold;
     cursor: pointer;
     transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
     display: block;
 }
 
-/* Плавный блик (shimmer) */
 @keyframes shimmer {
     0% { background-position: 200% 0; }
     100% { background-position: -200% 0; }
 }
 
-/* Естественное дыхание */
 @keyframes breathing {
     0% { transform: scale(1); }
     50% { transform: scale(0.99); }
@@ -110,26 +125,16 @@ button#submitBtn {
 }
 
 button#submitBtn.loading {
-    /* Бесшовный градиент для исключения синих пятен */
-    background: linear-gradient(110deg, 
-        #0088cc 30%, 
-        #66ccff 50%, 
-        #0088cc 70%) !important;
+    background: linear-gradient(110deg, #0088cc 30%, #66ccff 50%, #0088cc 70%) !important;
     background-size: 200% 100% !important;
-    
-    /* Совмещаем блик и мягкую пульсацию */
     animation: shimmer 1.5s infinite linear, breathing 2s infinite ease-in-out !important;
-    
     cursor: not-allowed;
     opacity: 1 !important;
-    box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
 }
 
-/* Кнопка в режиме ожидания (серая) */
 button#submitBtn:disabled:not(.loading) {
     background-color: #b0bec5 !important;
     opacity: 0.8;
-    cursor: not-allowed;
 }
 
 /* --- Блок уведомлений --- */
@@ -147,31 +152,40 @@ button#submitBtn:disabled:not(.loading) {
 }
 
 /* --- Таблицы --- */
-.table-container {
-    overflow-x: auto;
-    max-width: 95%;
-}
-
 table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 800px;
+    table-layout: auto;
 }
 
 th, td {
-    padding: 12px 8px;
+    padding: 8px 4px;
     text-align: center;
     border-bottom: 1px solid var(--border-color);
-    font-size: 13px;
-    white-space: nowrap;
+    font-size: 12px;
+    white-space: normal; /* Разрешаем перенос текста */
+    word-wrap: break-word;
+    vertical-align: middle;
 }
 
 th {
     background-color: #f8f8f8;
     color: var(--primary-color);
+    font-weight: bold;
 }
 
-/* --- НИЖНИЙ БАР (ВОССТАНОВЛЕННЫЙ) --- */
+/* Ограничение колонки пользователя на мобильных */
+@media (max-width: 480px) {
+    td:nth-child(2) {
+        max-width: 90px;
+    }
+    th, td {
+        font-size: 11px;
+        padding: 6px 2px;
+    }
+}
+
+/* --- Нижний бар --- */
 .bottom-nav {
     position: fixed;
     bottom: 0;
@@ -215,7 +229,6 @@ th {
     line-height: 44px;
     border-radius: 50%;
     text-align: center;
-    transition: all 0.3s ease;
 }
 
 .bottom-nav a.active i, 
@@ -233,7 +246,3 @@ th {
 /* Анимация страниц */
 .page { animation: fadeIn 0.3s ease; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-@media (max-width: 480px) {
-    .container { margin: 10px; }
-}

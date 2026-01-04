@@ -126,11 +126,6 @@ function loadData(action, tableId) {
         .then(res => res.json())
         .then(data => {
             tbody.innerHTML = '';
-            
-            // --- ДОБАВЛЯЕМ ЭТУ СТРОКУ ---
-            data.reverse(); // Переворачиваем массив: новые записи станут первыми
-            // ---------------------------
-
             data.forEach(row => {
                 const tr = document.createElement('tr');
                 if (tableId === 'historyTable') {
@@ -143,7 +138,6 @@ function loadData(action, tableId) {
                         <td>${row.gas || '-'}</td>
                     `;
                 } else {
-                    // Код для таблицы тарифов остается таким же
                     tr.innerHTML = `
                         <td>${formatDate(row.date)}</td>
                         <td>${row.t1 || '-'}</td>
@@ -178,23 +172,13 @@ document.getElementById('utilityForm').addEventListener('submit', function(e) {
     submitBtn.classList.add('loading');
 
     const formData = new URLSearchParams(new FormData(this));
-
-    // --- ПОЛУЧАЕМ ДАННЫЕ ИЗ TELEGRAM ---
-    const user = tg.initDataUnsafe?.user;
-    const userName = user ? `${user.first_name} ${user.last_name || ''}`.trim() : 'Неизвестный';
-    const userId = user ? user.id : '000';
-
-    // Отправляем в таблицу и имя, и ID (через пробел или в разные колонки, если подправишь GAS)
-    formData.append('user', `${userName} (ID: ${userId})`); 
-    // -----------------------------------
+    formData.append('user', 'Admin'); 
 
     fetch(URL_SCRIPT, {
         method: 'POST',
         body: formData,
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
     })
-	
-	
     .then(res => res.json())
     .then(data => {
         responseDiv.style.display = 'block';
