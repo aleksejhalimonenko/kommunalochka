@@ -132,6 +132,12 @@ function formatDate(dateStr) {
 }
 
 async function showPage(pageId) { // Додаємо async
+// Легкий "клик" при нажатии на иконку меню
+// Замість tg.HapticFeedback використовуємо повний шлях
+if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.HapticFeedback) {
+    window.Telegram.WebApp.HapticFeedback.impactOccurred('medium'); 
+}
+
     const lang = getCurrLang();
     
     // 1. ЗАПОБІЖНИК: Якщо масив порожній, чекаємо на завантаження перед перевіркою
@@ -259,6 +265,13 @@ document.getElementById('utilityForm').addEventListener('submit', function(e) {
     .then(data => {
         responseDiv.style.display = 'block';
         if (data.result === 'success') {
+			
+			// === ВИБРАЦИя ===
+            if (tg.HapticFeedback) {
+                tg.HapticFeedback.notificationOccurred('success');
+            }
+            // ==================================
+			
 			localStorage.removeItem('cache_getHistory');
 			
             responseDiv.innerHTML = i18n[lang].success_msg;
@@ -281,6 +294,8 @@ document.getElementById('utilityForm').addEventListener('submit', function(e) {
             }, 1000);
 
         } else {
+			// Вибрация ошибки
+            if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
             responseDiv.innerHTML = `<b>${i18n[lang].error_prefix}:</b> ` + data.message;
             submitBtn.disabled = false;
             submitBtn.classList.remove('loading');
@@ -288,6 +303,8 @@ document.getElementById('utilityForm').addEventListener('submit', function(e) {
         }
     })
     .catch(() => {
+		// вибрация ошибки:
+        if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('error');
         responseDiv.style.display = 'block';
         responseDiv.innerText = i18n[lang].error_network;
         submitBtn.disabled = false;
