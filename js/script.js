@@ -32,7 +32,8 @@ const i18n = {
         wait: "Зачекайте",
         sec: "сек",
         success_msg: "<b>Готово!</b> Дані збережено.",
-        access_denied: "Доступ обмежено. Ви не є верифікованим користувачем."
+        access_denied: "Доступ обмежено. Ви не є верифікованим користувачем.",
+		sending: "Відправка..."
     },
     ru: {
         home_title: "Передача показаний",
@@ -59,7 +60,8 @@ const i18n = {
         wait: "Подождите",
         sec: "сек",
         success_msg: "<b>Готово!</b> Данные сохранены.",
-        access_denied: "Доступ ограничен. Вы не являетесь верифицированным пользователем."
+        access_denied: "Доступ ограничен. Вы не являетесь верифицированным пользователем.",
+		sending: "Отправка..."
     }
 };
 
@@ -241,6 +243,7 @@ document.getElementById('utilityForm').addEventListener('submit', function(e) {
 
     submitBtn.disabled = true;
     submitBtn.classList.add('loading');
+	submitBtn.innerText = i18n[lang].sending; // <--- УСТАНАВЛИВАЕМ ТЕКСТ "ОТПРАВКА..."
 
     const formData = new URLSearchParams(new FormData(this));
     const userName = user ? `${user.first_name} ${user.last_name || ''}`.trim() : 'Неизвестный';
