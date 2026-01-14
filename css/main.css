@@ -15,7 +15,12 @@ body {
     padding: 0;
     background-color: var(--bg-color);
     color: var(--text-color);
-    padding-bottom: calc(80px + env(safe-area-inset-bottom));
+    /* Гарантированный отступ снизу, чтобы контент не подлезал под меню */
+    /* 80px (высота меню) + безопасная зона */
+    padding-bottom: calc(90px + env(safe-area-inset-bottom));
+    
+    /* Важно для стабильности Fullscreen на Android */
+    min-height: 100vh;;
 }
 
 /* --- Шапка --- */
@@ -196,22 +201,19 @@ th {
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
     z-index: 2000;
     
-    /* Автоматическая высота: база 70px + зона под полоской iPhone */
-    height: calc(70px + env(safe-area-inset-bottom));
-    padding-bottom: env(safe-area-inset-bottom);
+    /* Убираем фиксированный height, даем padding управлять высотой */
+    padding-top: 10px;
+    padding-bottom: calc(10px + env(safe-area-inset-bottom)); 
     
     display: flex;
-    align-items: center;
-}
-
-/* Добавим запас для страницы Home, чтобы её можно было проскроллить выше */
-#home .container {
-    margin-bottom: 250px; 
+    flex-direction: column;
+    justify-content: center;
 }
 
 .bottom-nav ul {
     display: flex;
     justify-content: space-around;
+    align-items: flex-start; /* Прижимаем иконки к верху навбара */
     list-style: none;
     margin: 0;
     padding: 0;
