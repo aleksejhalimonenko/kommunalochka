@@ -1,6 +1,35 @@
 const tg = window.Telegram.WebApp;
 tg.ready();
 tg.expand();
+// Эта команда (доступна в новых версиях API) запрашивает настоящий Fullscreen
+if (tg.requestFullscreen) {
+    tg.requestFullscreen();
+}
+
+// 3. Убираем визуальную границу шапки
+// Красим системный статус-бар в цвет твоего .header (белый)
+tg.setHeaderColor('#ffffff'); 
+
+// Красим подложку (нижнюю часть) в цвет твоего фона
+tg.setBackgroundColor('#f4f4f4');
+
+// 4. Фиксируем бота, чтобы он не закрывался свайпом вниз случайно
+tg.enableClosingConfirmation();
+
+// 1. Дозволяємо вертикальні свайпи (це вмикає Pull-to-Refresh)
+tg.enableVerticalSwipes();
+
+// 2. Обробка події оновлення (коли користувач потягнув вниз)
+tg.onEvent('reloadVertical', () => {
+    // Просто перезавантажуємо сторінку, щоб дані оновилися
+    location.reload();
+});
+
+// 3. Якщо хочеш кнопку "Налаштування" в меню Telegram, треба додати дію:
+tg.SettingsButton.show();
+tg.onEvent('settingsButtonClicked', () => {
+    showPage('settings'); // перекидає на твою сторінку налаштувань
+});
 
 const URL_SCRIPT = 'https://script.google.com/macros/s/AKfycbxO37_wj9dveyG5psxdS2Em_r8oRUxZxNRGDZ1VkXXAlK5Wxq4j3-PEt0sc2eqoeDLzkw/exec';
 
