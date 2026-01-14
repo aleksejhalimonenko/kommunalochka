@@ -186,6 +186,7 @@ th {
 }
 
 /* --- Нижний бар --- */
+/* --- Нижний бар с учетом iPhone Safe Areas --- */
 .bottom-nav {
     position: fixed;
     bottom: 0;
@@ -194,9 +195,18 @@ th {
     background-color: #ffffff;
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
     z-index: 2000;
-    height: 70px;
+    
+    /* Автоматическая высота: база 70px + зона под полоской iPhone */
+    height: calc(70px + env(safe-area-inset-bottom));
+    padding-bottom: env(safe-area-inset-bottom);
+    
     display: flex;
     align-items: center;
+}
+
+/* Добавим запас для страницы Home, чтобы её можно было проскроллить выше */
+#home .container {
+    margin-bottom: 250px; 
 }
 
 .bottom-nav ul {
