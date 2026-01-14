@@ -116,8 +116,14 @@ function formatDate(dateStr) {
     return date.toLocaleDateString(lang);
 }
 
-function showPage(pageId) {
+async function showPage(pageId) { // Додаємо async
     const lang = getCurrLang();
+    
+    // 1. ЗАПОБІЖНИК: Якщо масив порожній, чекаємо на завантаження перед перевіркою
+    if (verifiedIds.length === 0) {
+        await fetchVerifiedUsers(); 
+    }
+
     const user = tg.initDataUnsafe?.user;
     const currentUserId = user ? String(user.id) : "000";
     const isVerified = verifiedIds.includes(currentUserId);
@@ -128,6 +134,7 @@ function showPage(pageId) {
         return;
     }
 
+    // Решта коду без змін
     document.querySelectorAll('.page').forEach(p => p.style.display = 'none');
     document.getElementById(pageId).style.display = 'block';
     document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
