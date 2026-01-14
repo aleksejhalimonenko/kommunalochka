@@ -118,6 +118,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Завантажуємо список дозволених ID при старті
     await fetchVerifiedUsers();
+	showPage('home');
 });
 
 function formatDate(dateStr) {
