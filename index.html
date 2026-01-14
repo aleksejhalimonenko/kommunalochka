@@ -19,19 +19,19 @@
             <form id="utilityForm">
                 <div class="input-field">
                     <label data-i18n="label_t1">Електроенергія Т1 (кВт)</label>
-                    <input type="number" name="electricityt1" required>
+                    <input type="number" name="electricityt1" required inputmode="decimal" pattern="[0-9]*" enterkeyhint="next">
                 </div>
                 <div class="input-field">
                     <label data-i18n="label_t2">Електроенергія Т2 (кВт)</label>
-                    <input type="number" name="electricityt2" required>
+                    <input type="number" name="electricityt2" required inputmode="decimal" pattern="[0-9]*" enterkeyhint="next">
                 </div>
                 <div class="input-field">
                     <label data-i18n="label_water">Вода (куб. м)</label>
-                    <input type="number" name="water" required>
+                    <input type="number" name="water" required inputmode="decimal" pattern="[0-9]*" enterkeyhint="next">
                 </div>
                 <div class="input-field">
                     <label data-i18n="label_gas">Газ (куб. м)</label>
-                    <input type="number" name="gas" required>
+                    <input type="number" name="gas" required inputmode="decimal" pattern="[0-9]*" enterkeyhint="done">
                 </div>
                 <button id="submitBtn" type="submit" data-i18n="btn_send">Відправити дані</button>
             </form>
